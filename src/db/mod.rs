@@ -1,5 +1,5 @@
 mod dbutil;
-mod model;
+mod models;
 
-pub use model::*;
+pub use models::*;
 pub use dbutil::*;
