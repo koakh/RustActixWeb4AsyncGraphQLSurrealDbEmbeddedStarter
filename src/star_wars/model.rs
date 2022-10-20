@@ -116,13 +116,9 @@ impl QueryRoot {
         let res = db.execute(&ast, ses, None, false).await.unwrap();
         let data = &res[0].result.as_ref().to_owned();
         let value = data.unwrap().single().to_owned();
-        // let surreal_json_value = serde_json::to_value(&value).unwrap();
         debug!("value: {:?}", value);
-        // debug!("surreal_json_value: {:?}", surreal_json_value);
-        // let person = Person::from_value(value);
-        // let person = Person::from(value);
         // @Tobie way
-        // That is, this conversion is whatever the implementation of From<T> for U chooses to do.
+        // that is, this conversion is whatever the implementation of From<T> for U chooses to do.
         let person: Person = value.into();
         debug!("value person: {:?}", person);
 
@@ -187,6 +183,7 @@ impl QueryRoot {
     field(name = "friends", type = "Vec<Character>"),
     field(name = "appears_in", type = "&'ctx [Episode]")
 )]
+
 pub enum Character {
     Human(Human),
     Droid(Droid),
