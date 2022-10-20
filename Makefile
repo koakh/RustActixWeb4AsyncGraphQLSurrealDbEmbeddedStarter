@@ -4,7 +4,6 @@ RUST_LOG := trace,actix_server=trace,actix_web=trace
 LOG_LEVEL=DEBUG
 LOGFILE_LEVEL=DEBUG
 
-
 build:
 # @cargo build --locked --target x86_64-unknown-linux-gnu
 	@cargo build

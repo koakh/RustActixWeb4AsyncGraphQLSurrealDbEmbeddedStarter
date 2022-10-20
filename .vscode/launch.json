@@ -21,7 +21,11 @@
       },
       "args": [],
       "cwd": "${workspaceFolder}",
-      
+      "env": {
+        "RUST_LOG":"trace,actix_server=trace,actix_web=trace",
+        "LOG_LEVEL":"DEBUG",
+        "LOGFILE_LEVEL":"DEBUG,"
+      }
     },
     {
       "type": "lldb",

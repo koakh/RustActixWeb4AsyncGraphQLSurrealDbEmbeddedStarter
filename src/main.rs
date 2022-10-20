@@ -40,13 +40,19 @@ async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     // Note: web::Data created outside HttpServer::new closure
-    let data = web::Data::new(AppStateGlobal {
+    // let data = web::Data::new(AppStateGlobal {
+    //     counter: Mutex::new(0),
+    //     datastore: Datastore::new("tikv://127.0.0.1:2379").await.unwrap(),
+    //     session: Session::for_kv().with_ns("test").with_db("test"),
+    // });
+
+    let data = AppStateGlobal {
         counter: Mutex::new(0),
         datastore: Datastore::new("tikv://127.0.0.1:2379").await.unwrap(),
         session: Session::for_kv().with_ns("test").with_db("test"),
-    });
+    };
 
-    let ds = Datastore::new("tikv://127.0.0.1:2379").await.unwrap();
+    // let ds = Datastore::new("tikv://127.0.0.1:2379").await.unwrap();
 
     let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
         .data(StarWars::new())
@@ -55,8 +61,8 @@ async fn main() -> std::io::Result<()> {
         //     server_id: SERVER_COUNTER.fetch_add(1, Ordering::SeqCst),
         //     request_count: Cell::new(0),
         // }))
-        // .data(data.clone())
-        .data(ds)
+        .data(data)
+        // .data(ds)
         .finish();
 
     log::info!("starting HTTP server on port 8282");
