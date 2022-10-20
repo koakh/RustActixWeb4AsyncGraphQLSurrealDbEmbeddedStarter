@@ -1,8 +1,8 @@
 HTTP_SERVER_URI := 0.0.0.0:8543
 HTTP_SERVER_API_KEY := uOtXEZXYslKyB0n3g3xRmCaaNsAwB5KmgFcy1X7bbcbtS9dhOpKuhZ04Mfr2OKGL
 RUST_LOG := trace,actix_server=trace,actix_web=trace
-LOG_LEVEL=DEBUG
-LOGFILE_LEVEL=DEBUG
+LOG_LEVEL := DEBUG
+LOGFILE_LEVEL := DEBUG
 
 build:
 # @cargo build --locked --target x86_64-unknown-linux-gnu
@@ -12,7 +12,7 @@ buildRelease:
 	@cargo build --release --locked --target x86_64-unknown-linux-gnu
 
 run:
-	@cargo run
+	@RUST_LOG=$(RUST_LOG) LOG_LEVEL=$(LOG_LEVEL) LOG_LEVEL_FILE=$(LOG_LEVEL_FILE) cargo run
 
 # startServer:
 # 	@RUST_BACKTRACE=full \

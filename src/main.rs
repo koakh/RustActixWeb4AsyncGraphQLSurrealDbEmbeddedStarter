@@ -15,6 +15,7 @@ use surrealdb::{Datastore, Session};
 
 mod app;
 mod star_wars;
+mod db;
 
 use self::app::{AppState, AppStateGlobal};
 use self::star_wars::{QueryRoot, StarWars, StarWarsSchema};

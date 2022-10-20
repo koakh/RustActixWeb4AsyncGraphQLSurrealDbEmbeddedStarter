@@ -1,9 +1,10 @@
 use async_graphql::connection::{query, Connection, Edge, EmptyFields};
 use async_graphql::{Context, Enum, FieldResult, Interface, Object};
 use log::debug;
-use surrealdb::Datastore;
+use surrealdb::{sql::Value, Datastore};
 
 use crate::app::AppStateGlobal;
+use crate::db::Person;
 
 use super::StarWars;
 
@@ -92,12 +93,6 @@ impl Droid {
 
 pub struct QueryRoot;
 
-// TODO:
-struct Person {
-    name: String,
-    age:  u8,
-}
-
 #[Object]
 impl QueryRoot {
     async fn hero(
@@ -110,16 +105,22 @@ impl QueryRoot {
     ) -> Character {
         // let state = &ctx.data_unchecked::<Datastore>();
         // TODO: add to rust notes destructure
-        let AppStateGlobal {datastore: db, session: ses, counter} = &ctx.data_unchecked::<AppStateGlobal>();
-        let ast = format!("SELECT * FROM person");
+        let AppStateGlobal {
+            datastore: db,
+            session: ses,
+            counter,
+        } = &ctx.data_unchecked::<AppStateGlobal>();
+        let ast = format!("SELECT * FROM {}", "person");
         // CREATE person:tobie CONTENT { name: 'Tobie', meta_data: { field: 'value' } };
         // CREATE person:jamie CONTENT { name: 'Jamie', meta_data: { field: 'value' } };
-        let res = db.execute(&ast, &ses, None, false).await.unwrap();
+        let res = db.execute(&ast, ses, None, false).await.unwrap();
         let data = &res[0].result.as_ref().to_owned();
         let value = data.unwrap().single().to_owned();
-        let surreal_json_value = serde_json::to_value(&value).unwrap();
+        // let surreal_json_value = serde_json::to_value(&value).unwrap();
         debug!("value: {:?}", value);
-        debug!("surreal_json_value: {:?}", surreal_json_value);
+        // debug!("surreal_json_value: {:?}", surreal_json_value);
+        let person = Person::from_value(value);
+        debug!("value person: {:?}", person);
 
         if episode == Episode::Empire {
             Human(ctx.data_unchecked::<StarWars>().luke).into()
