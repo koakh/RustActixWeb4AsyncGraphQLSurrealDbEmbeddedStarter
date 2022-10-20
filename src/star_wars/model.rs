@@ -119,7 +119,11 @@ impl QueryRoot {
         // let surreal_json_value = serde_json::to_value(&value).unwrap();
         debug!("value: {:?}", value);
         // debug!("surreal_json_value: {:?}", surreal_json_value);
-        let person = Person::from_value(value);
+        // let person = Person::from_value(value);
+        // let person = Person::from(value);
+        // @Tobie way
+        // That is, this conversion is whatever the implementation of From<T> for U chooses to do.
+        let person: Person = value.into();
         debug!("value person: {:?}", person);
 
         if episode == Episode::Empire {

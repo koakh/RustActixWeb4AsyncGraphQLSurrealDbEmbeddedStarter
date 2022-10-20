@@ -5,15 +5,15 @@
 ## Usage
 
 ```sh
-cd graphql/graphql-demo
-cargo run
+$ cd graphql/graphql-demo
+$ cargo run
 ```
 
 ## Endpoints
 
 ```
-GET/POST  http://localhost:8080/graphql   GraphQL endpoint
-GET       http://localhost:8080/graphiql  GraphQL playground UI
+GET/POST  http://localhost:8282/graphql     GraphQL endpoint
+GET       http://localhost:8282/playground  GraphQL playground UI
 ```
 
 ## Query Examples

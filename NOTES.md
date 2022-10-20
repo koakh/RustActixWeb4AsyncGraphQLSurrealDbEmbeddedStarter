@@ -2,7 +2,13 @@
 
 ## Links
 
+### SurrealDB
+
 - [surrealdb](https://docs.rs/surrealdb/1.0.0-beta.8/surrealdb/)
+
+### Rust
+
+- https://doc.rust-lang.org/rust-by-example/conversion/from_into.html
 
 ## Install SurrealDB Crate
 
