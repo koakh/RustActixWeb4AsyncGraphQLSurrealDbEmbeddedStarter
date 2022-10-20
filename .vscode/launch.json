@@ -22,9 +22,10 @@
       "args": [],
       "cwd": "${workspaceFolder}",
       "env": {
-        "RUST_LOG":"trace,actix_server=trace,actix_web=trace",
+        // "RUST_LOG":"trace,actix_server=trace,actix_web=trace",
+        "RUST_LOG":"debug,actix_server=debug,actix_web=debug",
         "LOG_LEVEL":"DEBUG",
-        "LOGFILE_LEVEL":"DEBUG,"
+        "LOGFILE_LEVEL":"DEBUG"
       }
     },
     {
