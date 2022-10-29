@@ -30,7 +30,13 @@ $ ./sdbstart.sh
 
 # project
 $ cd ~/Development/examples4_async_graphql/
+$ make run
+# outcome
+[2022-10-29T21:15:39Z TRACE actix_server::worker] Service "actix-web-service-0.0.0.0:8282" is available
+[2022-10-29T21:15:39Z TRACE actix_server::signals] setting up OS signal listener
 ```
+
+no open <http://localhost:8282/playground>
 
 ## Links
 
