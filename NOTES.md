@@ -1,6 +1,42 @@
 # NOTES
 
+## TLDR
+
+```shell
+$ screen
+$ cd ~/.tiup/
+# tikv
+$ ./start.sh
+# outcome
+PD client endpoints: [127.0.0.1:2379 127.0.0.1:2382 127.0.0.1:2384]
+To view the Prometheus: http://127.0.0.1:41871
+To view the Grafana: http://127.0.0.1:3000
+# or 
+$ bin/tiup playground --tag surrealdb-kv --mode tikv-slim --pd 3 --kv 3
+
+# new window
+$ cd ~/.surrealdb/
+$ ./sdbstart.sh 
+# outcome
+[2022-10-29 22:14:33] INFO  surrealdb::iam Root authentication is enabled
+[2022-10-29 22:14:33] INFO  surrealdb::iam Root username is 'root'
+[2022-10-29 22:14:33] INFO  surrealdb::dbs Database strict mode is disabled
+[2022-10-29 22:14:33] INFO  surrealdb::kvs Connecting to kvs store at tikv://127.0.0.1:2379
+[2022-10-29 22:14:33] INFO  surrealdb::kvs Connected to kvs store at tikv://127.0.0.1:2379
+[2022-10-29 22:14:33] INFO  surrealdb::net Starting web server on 0.0.0.0:8000
+[2022-10-29 22:14:33] INFO  surrealdb::net Started web server on 0.0.0.0:8000
+# or
+# ./surreal start --log debug --user root --pass root tikv://127.0.0.1:2379
+
+# project
+$ cd ~/Development/examples4_async_graphql/
+```
+
 ## Links
+
+### ActixWeb
+
+- project started from actixweb [examples4_async_graphql](https://github.com/async-graphql/examples/tree/master/actix-web/starwars)
 
 ### SurrealDB
 
@@ -8,7 +44,7 @@
 
 ### Rust
 
-- https://doc.rust-lang.org/rust-by-example/conversion/from_into.html
+- [Rust from_into](https://doc.rust-lang.org/rust-by-example/conversion/from_into.html)
 
 ## Install SurrealDB Crate
 
