@@ -1,6 +1,9 @@
+use std::collections::BTreeMap;
+
 use async_graphql::connection::{query, Connection, Edge, EmptyFields};
 use async_graphql::{Context, Enum, FieldResult, Interface, Object};
 use log::debug;
+use surrealdb::sql::{Id, Strand, Thing};
 use surrealdb::{sql::Value, Datastore};
 
 use crate::app::AppStateGlobal;
@@ -13,10 +16,8 @@ use super::StarWars;
 pub enum Episode {
     /// Released in 1977.
     NewHope,
-
     /// Released in 1980.
     Empire,
-
     /// Released in 1983.
     Jedi,
 }
@@ -103,24 +104,24 @@ impl QueryRoot {
         )]
         episode: Episode,
     ) -> Character {
-        // let state = &ctx.data_unchecked::<Datastore>();
-        // TODO: add to rust notes destructure
-        let AppStateGlobal {
-            datastore: db,
-            session: ses,
-            counter,
-        } = &ctx.data_unchecked::<AppStateGlobal>();
-        let ast = format!("SELECT * FROM {}", "person");
-        // CREATE person:tobie CONTENT { name: 'Tobie', meta_data: { field: 'value' } };
-        // CREATE person:jamie CONTENT { name: 'Jamie', meta_data: { field: 'value' } };
-        let res = db.execute(&ast, ses, None, false).await.unwrap();
-        let data = &res[0].result.as_ref().to_owned();
-        let value = data.unwrap().single().to_owned();
-        debug!("value: {:?}", value);
-        // @Tobie way
-        // that is, this conversion is whatever the implementation of From<T> for U chooses to do.
-        let person: Person = value.into();
-        debug!("value person: {:?}", person);
+        // // let state = &ctx.data_unchecked::<Datastore>();
+        // // TODO: add to rust notes destructure
+        // let AppStateGlobal {
+        //     datastore: db,
+        //     session: ses,
+        //     counter,
+        // } = &ctx.data_unchecked::<AppStateGlobal>();
+        // let ast = format!("SELECT * FROM {}", "person");
+        // // CREATE person:tobie CONTENT { name: 'Tobie', meta_data: { field: 'value' } };
+        // // CREATE person:jamie CONTENT { name: 'Jamie', meta_data: { field: 'value' } };
+        // let res = db.execute(&ast, ses, None, false).await.unwrap();
+        // let data = &res[0].result.as_ref().to_owned();
+        // let value = data.unwrap().single().to_owned();
+        // debug!("value: {:?}", value);
+        // // @Tobie way
+        // // that is, this conversion is whatever the implementation of From<T> for U chooses to do.
+        // let person: Person = value.into();
+        // debug!("value person: {:?}", person);
 
         if episode == Episode::Empire {
             Human(ctx.data_unchecked::<StarWars>().luke).into()
@@ -174,6 +175,79 @@ impl QueryRoot {
             .await
             .map(|conn| conn.map_node(Droid))
     }
+
+    async fn person(
+        &self,
+        ctx: &Context<'_>,
+        #[graphql(desc = "id of the person")] id: String,
+    ) -> Option<Person> {
+        // let state = &ctx.data_unchecked::<Datastore>();
+        // TODO: add to rust notes destructure with alias ex datastore to db
+        let AppStateGlobal {
+            datastore: db,
+            session: ses,
+            counter: _,
+        } = &ctx.data_unchecked::<AppStateGlobal>();
+        // prepare query
+        let ast = "SELECT * FROM $id".to_string();
+        // type inference lets us omit an explicit type signature (which would be `BTreeMap<&str, &str>` in this example).
+        let mut vars = BTreeMap::new();
+        // when ork with id's we must use Thing struct
+        vars.insert(
+            "id".to_string(),
+            Value::Thing(Thing {
+                tb: "person".to_string(),
+                id: {Id::String(id)},
+            }),
+        );
+        // execute query
+        let res = db.execute(&ast, ses, Some(vars), false).await.unwrap();
+        // get query execute result
+        let data = &res[0].result.as_ref().to_owned();
+        // get surrealdb value
+        let value = data.unwrap().single().to_owned();        
+        // debug!("value: {:?}", value);
+        // check if we have any object, else is a empty record set and we must return None
+        if !value.is_object() {
+            return None;
+        }
+        // TODO: @Tobie way use into() and From<T> (into is the value returned from From<T> implementation)
+        // that is, this conversion is whatever the implementation of From<T> for U chooses to do.
+        let person: Person = value.into();
+        // debug!("value person: {:?}", person);
+        // return graphql objectType
+        Some(person)
+    }
+
+    // async fn persons(
+    //     &self,
+    //     ctx: &Context<'_>,
+    //     after: Option<String>,
+    //     before: Option<String>,
+    //     first: Option<i32>,
+    //     last: Option<i32>,
+    // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
+    //     let AppStateGlobal {
+    //         datastore: db,
+    //         session: ses,
+    //         counter: _,
+    //     } = &ctx.data_unchecked::<AppStateGlobal>();
+    //     // prepare query
+    //     // let ast = format!("SELECT * FROM person where id = {};", "$id");
+    //     // let ast = format!("SELECT * FROM person where id = {};", "$id");
+    //     let ast = "SELECT * FROM person".to_string();
+    //     // execute query
+    //     let res = db.execute(&ast, ses, None, false).await.unwrap();
+    //     // get query execute result
+    //     let data = &res[0].result.as_ref().to_owned();
+    //     // get surrealdb value
+    //     let value = data.unwrap().single().to_owned();
+    //     debug!("value is_object: {}", value.is_object());
+    //     let persons: Person = value.into();
+
+    //     // return graphql objectType
+    //     //persons.to_vec()
+    // }
 }
 
 #[derive(Interface)]

@@ -14,6 +14,7 @@ pub struct AppState {
 pub struct AppStateGlobal {
     // global, used for all workers
     pub counter: Mutex<i32>,
+    // surrealdb
     pub datastore: Datastore,
     pub session: Session,
 }

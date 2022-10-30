@@ -1,3 +1,6 @@
+// old dbutil with full surrealdb::sql::Value match values with all match arms
+// before refactor all code to be inside src/db/models/person.rs
+
 // use super::{MetaData, Person};
 // use log::debug;
 // use surrealdb::sql::Value;

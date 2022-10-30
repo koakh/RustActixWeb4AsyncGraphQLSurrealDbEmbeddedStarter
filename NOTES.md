@@ -28,6 +28,18 @@ $ ./sdbstart.sh
 # or
 # ./surreal start --log debug --user root --pass root tikv://127.0.0.1:2379
 
+# new window, THIS will connect to same TiKV instance as GraphQL server, this way we can use shell
+$ cd ~/.surrealdb/
+$ ./sdbsql.sh
+# or
+./surreal sql --conn http://localhost:8000 --user root --pass root --ns test --db test --pretty
+
+# add some seed data
+
+CREATE person:tobie CONTENT { name: 'Tobie', meta_data: { field: 'some joe tobie' } };
+CREATE person:jamie CONTENT { name: 'Jamie', meta_data: { field: 'some joe jamie' } };
+CREATE person:koakh CONTENT { name: 'Koakh', meta_data: { field: 'some joe koakh' } };
+
 # project
 $ cd ~/Development/examples4_async_graphql/
 $ make run
@@ -36,7 +48,7 @@ $ make run
 [2022-10-29T21:15:39Z TRACE actix_server::signals] setting up OS signal listener
 ```
 
-no open <http://localhost:8282/playground>
+now open <http://localhost:8282/playground>
 
 ## Links
 
@@ -149,3 +161,22 @@ $ sudo apt-get -y install \
 	pkg-config \
 	build-essential
 ```
+
+
+
+
+
+
+
+
+
+TODO: use parameters and Thing
+https://discordapp.com/channels/902568124350599239/1014970959461105664/1036062437222404167
+
+
+TODO: 
+empty record set
+https://discordapp.com/channels/902568124350599239/1014970959461105664/1036066184518447264
+
+The Response Value is in every case an Value::Array. If you want to select an single record by its id using select $ID or whatever you would get an array which contains just the single record. If the record does not exist the array would be empty. For handling this just do value.into_iter().next()
+

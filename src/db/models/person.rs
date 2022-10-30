@@ -1,7 +1,11 @@
+use async_graphql::SimpleObject;
 use serde::Serialize;
 use surrealdb::sql::Value;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
+// #[derive(Debug, Serialize)]
+#[derive(SimpleObject)]
+// #[derive(Debug, Serialize)]
 pub struct Person {
     pub id: String,
     pub name: String,
@@ -11,6 +15,8 @@ pub struct Person {
 
 impl From<Value> for Person {
     fn from(value: Value) -> Self {
+        // TODO: this must dont have any default values, else if record 
+        // is miss it shows default values
         let mut model = Self {
             id: String::from(""),
             name: String::from(""),
@@ -34,7 +40,9 @@ impl From<Value> for Person {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug)]
+// #[derive(Debug, Serialize)]
+#[derive(SimpleObject)]
 pub struct MetaData {
     pub field: Option<String>,
 }
