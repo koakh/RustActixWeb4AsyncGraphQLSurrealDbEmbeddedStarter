@@ -197,7 +197,7 @@ impl QueryRoot {
             "id".to_string(),
             Value::Thing(Thing {
                 tb: "person".to_string(),
-                id: {Id::String(id)},
+                id: { Id::String(id) },
             }),
         );
         // execute query
@@ -205,7 +205,7 @@ impl QueryRoot {
         // get query execute result
         let data = &res[0].result.as_ref().to_owned();
         // get surrealdb value
-        let value = data.unwrap().single().to_owned();        
+        let value = data.unwrap().single().to_owned();
         // debug!("value: {:?}", value);
         // check if we have any object, else is a empty record set and we must return None
         if !value.is_object() {
@@ -215,39 +215,78 @@ impl QueryRoot {
         // that is, this conversion is whatever the implementation of From<T> for U chooses to do.
         let person: Person = value.into();
         // debug!("value person: {:?}", person);
+
         // return graphql objectType
         Some(person)
     }
 
-    // async fn persons(
-    //     &self,
-    //     ctx: &Context<'_>,
-    //     after: Option<String>,
-    //     before: Option<String>,
-    //     first: Option<i32>,
-    //     last: Option<i32>,
-    // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
-    //     let AppStateGlobal {
-    //         datastore: db,
-    //         session: ses,
-    //         counter: _,
-    //     } = &ctx.data_unchecked::<AppStateGlobal>();
-    //     // prepare query
-    //     // let ast = format!("SELECT * FROM person where id = {};", "$id");
-    //     // let ast = format!("SELECT * FROM person where id = {};", "$id");
-    //     let ast = "SELECT * FROM person".to_string();
-    //     // execute query
-    //     let res = db.execute(&ast, ses, None, false).await.unwrap();
-    //     // get query execute result
-    //     let data = &res[0].result.as_ref().to_owned();
-    //     // get surrealdb value
-    //     let value = data.unwrap().single().to_owned();
-    //     debug!("value is_object: {}", value.is_object());
-    //     let persons: Person = value.into();
+    async fn persons(
+        &self,
+        ctx: &Context<'_>,
+        #[graphql(desc = "custom filter")] filter: Option<String>,
+        after: Option<String>,
+        before: Option<String>,
+        first: Option<i32>,
+        last: Option<i32>,
+    ) -> Vec<Person> {
+        // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
+        let AppStateGlobal {
+            datastore: db,
+            session: ses,
+            counter: _,
+        } = &ctx.data_unchecked::<AppStateGlobal>();
+        // prepare query
+        let ast = "SELECT * FROM person $filter;".to_string();
+                // init parameters btree
+        let mut vars = BTreeMap::new();
+        if let Some(v) = filter {
+            // when ork with id's we must use Thing struct
+            debug!("v: {}", v);
+            vars.insert(
+                "filter".to_string(),
+                Value::Strand(Strand(format!("WHERE {}", v))),
+            );
+        }
+        // execute query
+        let res = db.execute(&ast, ses, Some(vars), false).await.unwrap();
+        // get query execute result
+        let data = &res[0].result.as_ref().to_owned();
+        // get surrealdb value
+        // using single() we will get only the first record,
+        // to get array don't use single(), and after it is_array will be true
+        // let value = data.unwrap().single().to_owned();
+        let value = data.unwrap().to_owned();
+        debug!("value is_object: {}", value.is_object());
+        debug!("value is_array: {}", value.is_array());
 
-    //     // return graphql objectType
-    //     //persons.to_vec()
-    // }
+        let mut vec : Vec::<Person> = Vec::new();
+        if let Value::Array(array) = value {
+            // debug!("array: {:?}", array);
+            array.into_iter().for_each(|value| {
+                debug!("surreal value {:?}", value);
+                let person: Person = value.into();
+                vec.push(person);
+            });
+            debug!("surreal vec {:?}", vec);
+        }
+
+        vec
+
+        // let person: Person = value.into();
+
+        // if let Value::Array(value) = value {
+
+        // }
+
+        // let iter = value.into_iter().next();
+
+        // for x in value.into_iter().next() {
+        //     debug!("{:?}", x);
+        // }
+
+        // return graphql objectType
+        // Some(person)
+    }
 }
 
 #[derive(Interface)]

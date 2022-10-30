@@ -53,6 +53,32 @@ query person($id: String!) {
   // use thing id without table
   "id": "tobie"
 }
+
+
+### queryPersons
+// @name queryPersons
+
+POST {{gqlUri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+// Authorization: Bearer {{authToken}}
+
+query persons($filter: String!) {
+  persons(filter: $filter) {
+    id
+    name
+    age
+    metaData {
+      field
+    }
+  }
+}
+
+{
+  // use thing id without table
+  "filter": "name = 'tobie'"
+}
+
 ### SignUpMutation
 
 // @name SignUpMutation
