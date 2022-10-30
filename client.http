@@ -1,0 +1,72 @@
+@host = 127.0.0.1
+@port = 8282
+@baseUri = http://{{host}}:{{port}}
+@gqlUri = {{baseUri}}/graphql
+@contentType = application/json
+@requestType = GraphQL
+# @authToken = {{SignInMutation.response.body.$.data.signIn}}
+
+### queryHero
+// @name queryHero
+
+POST {{gqlUri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+// Authorization: Bearer {{authToken}}
+
+query hero($episode: Episode!) {
+  hero(episode: $episode) {
+    id
+    name
+    friends{
+      id
+      name      
+    }
+    appearsIn
+  }
+}
+
+{
+  "episode": "NEW_HOPE"
+}
+
+### queryPerson
+// @name queryPerson
+
+POST {{gqlUri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+// Authorization: Bearer {{authToken}}
+
+query person($id: String!) {
+  person(id: $id) {
+    id
+    name
+    age
+    metaData {
+      field
+    }
+  }
+}
+
+{
+  // use thing id without table
+  "id": "tobie"
+}
+### SignUpMutation
+
+// @name SignUpMutation
+
+POST {{gqlUri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+// Authorization: Bearer {{authToken}}
+
+mutation SignUpMutation($signUpEmail: String!, $signUpPassword: String!) {
+  signUp(email: $signUpEmail, password: $signUpPassword)
+}
+
+{
+  "signUpEmail": "moke@example.com",
+  "signUpPassword": "Aa#12345"
+}
