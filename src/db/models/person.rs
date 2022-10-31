@@ -1,12 +1,18 @@
-use async_graphql::SimpleObject;
-use log::debug;
+use async_graphql::{SimpleObject, InputObject};
 use surrealdb::sql::Value;
+
+#[derive(InputObject)]
+pub struct InputFilter {
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub age: Option<i8>,
+}
 
 #[derive(Debug, SimpleObject)]
 pub struct Person {
     pub id: String,
     pub name: String,
-    pub age: Option<u8>,
+    pub age: Option<i8>,
     pub meta_data: Option<MetaData>,
 }
 
@@ -27,7 +33,7 @@ impl From<Value> for Person {
                 match &k[..] {
                     "id" => model.id = v.as_string(),
                     "name" => model.name = v.as_string(),
-                    "age" => model.age = Some(v.as_int() as u8),
+                    "age" => model.age = Some(v.as_int() as i8),
                     "meta_data" => model.meta_data = Some(MetaData::from(v)),
                     _ => {}
                 }

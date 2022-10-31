@@ -3,11 +3,11 @@ use std::collections::BTreeMap;
 use async_graphql::connection::{query, Connection, Edge, EmptyFields};
 use async_graphql::{Context, Enum, FieldResult, Interface, Object};
 use log::debug;
-use surrealdb::sql::{Id, Strand, Thing};
+use surrealdb::sql::{Id, Strand, Thing, Number};
 use surrealdb::{sql::Value, Datastore};
 
 use crate::app::AppStateGlobal;
-use crate::db::Person;
+use crate::db::{Person, InputFilter};
 
 use super::StarWars;
 
@@ -223,7 +223,7 @@ impl QueryRoot {
     async fn persons(
         &self,
         ctx: &Context<'_>,
-        #[graphql(desc = "custom filter")] filter: Option<String>,
+        #[graphql(desc = "custom filter")] input_filter: Option<InputFilter>,
         after: Option<String>,
         before: Option<String>,
         first: Option<i32>,
@@ -235,20 +235,59 @@ impl QueryRoot {
             session: ses,
             counter: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
-        // prepare query
-        let ast = "SELECT * FROM person $filter;".to_string();
-                // init parameters btree
+
+        let mut ast: String;
+        // init parameters btree
         let mut vars = BTreeMap::new();
-        if let Some(v) = filter {
-            // when ork with id's we must use Thing struct
-            debug!("v: {}", v);
-            vars.insert(
-                "filter".to_string(),
-                Value::Strand(Strand(format!("WHERE {}", v))),
-            );
+        // if let Some(v) = input_filter {
+        //     vars.insert(
+        //         "field".to_string(),
+        //         Value::Strand(Strand("name".to_string())),
+        //     );
+        // }
+        // TODO: create a fn helper
+        match &input_filter {
+            Some(filter) => {
+                ast = "SELECT * FROM person WHERE ".to_string();
+                let mut fields: Vec<&str> = Vec::new();
+                if let Some(v) = &filter.id {
+                    fields.push("id = $id");
+                    vars.insert(
+                        "id".to_string(),
+                        Value::Thing(Thing {
+                            tb: "person".to_string(),
+                            id: { Id::String(v.to_string()) },
+                        }),
+                    );
+                }
+                if let Some(v) = &filter.name {
+                    fields.push("name = $name");
+                    vars.insert(
+                        "name".to_string(),
+                        Value::Strand(Strand(v.to_string())),
+                    );        
+                }
+                if let Some(v) = &filter.age {
+                    fields.push("age = $age");
+                    vars.insert(
+                        "age".to_string(),
+                        Value::Number(Number::Int(*v as i64)),
+                    );        
+                }
+                for (i, el) in fields.iter().enumerate() {
+                    if i > 0 {
+                        ast.push_str(" AND ");
+                    }
+                    ast.push_str(el);
+                }
+            }
+            None => {
+              ast = "SELECT * FROM person".to_string();
+          }
         }
+
         // execute query
-        let res = db.execute(&ast, ses, Some(vars), false).await.unwrap();
+        let res = db.execute(ast.as_str(), ses, Some(vars), false).await.unwrap();
         // get query execute result
         let data = &res[0].result.as_ref().to_owned();
         // get surrealdb value
@@ -267,25 +306,10 @@ impl QueryRoot {
                 let person: Person = value.into();
                 vec.push(person);
             });
-            debug!("surreal vec {:?}", vec);
+            // debug!("surreal vec {:?}", vec);
         }
 
         vec
-
-        // let person: Person = value.into();
-
-        // if let Value::Array(value) = value {
-
-        // }
-
-        // let iter = value.into_iter().next();
-
-        // for x in value.into_iter().next() {
-        //     debug!("{:?}", x);
-        // }
-
-        // return graphql objectType
-        // Some(person)
     }
 }
 
