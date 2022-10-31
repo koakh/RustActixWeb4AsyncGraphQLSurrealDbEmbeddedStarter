@@ -3,11 +3,11 @@ use std::collections::BTreeMap;
 use async_graphql::connection::{query, Connection, Edge, EmptyFields};
 use async_graphql::{Context, Enum, FieldResult, Interface, Object};
 use log::debug;
-use surrealdb::sql::{Id, Strand, Thing, Number};
+use surrealdb::sql::{Id, Number, Strand, Thing};
 use surrealdb::{sql::Value, Datastore};
 
 use crate::app::AppStateGlobal;
-use crate::db::{Person, InputFilter};
+use crate::db::{InputFilter, Person};
 
 use super::StarWars;
 
@@ -223,7 +223,7 @@ impl QueryRoot {
     async fn persons(
         &self,
         ctx: &Context<'_>,
-        #[graphql(desc = "custom filter")] input_filter: Option<InputFilter>,
+        #[graphql(desc = "custom filter")] filter: Option<InputFilter>,
         after: Option<String>,
         before: Option<String>,
         first: Option<i32>,
@@ -236,22 +236,23 @@ impl QueryRoot {
             counter: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
-        let mut ast: String;
+        let mut ast = "SELECT * FROM person ".to_string();
         // init parameters btree
         let mut vars = BTreeMap::new();
-        // if let Some(v) = input_filter {
+        // if let Some(v) = filter {
         //     vars.insert(
         //         "field".to_string(),
         //         Value::Strand(Strand("name".to_string())),
         //     );
         // }
-        // TODO: create a fn helper
-        match &input_filter {
-            Some(filter) => {
-                ast = "SELECT * FROM person WHERE ".to_string();
-                let mut fields: Vec<&str> = Vec::new();
-                if let Some(v) = &filter.id {
-                    fields.push("id = $id");
+        // TODO: create a fn helper a TRAIT with a default implementation
+        // requires a sql, get fields for loop from input type
+        // TODO use if let here
+        match &filter {
+            Some(f) => {
+                let mut filter_fields: Vec<&str> = Vec::new();
+                if let Some(v) = &f.id {
+                    filter_fields.push("id = $id");
                     vars.insert(
                         "id".to_string(),
                         Value::Thing(Thing {
@@ -260,34 +261,35 @@ impl QueryRoot {
                         }),
                     );
                 }
-                if let Some(v) = &filter.name {
-                    fields.push("name = $name");
-                    vars.insert(
-                        "name".to_string(),
-                        Value::Strand(Strand(v.to_string())),
-                    );        
+                if let Some(v) = &f.name {
+                    filter_fields.push("name = $name");
+                    vars.insert("name".to_string(), Value::Strand(Strand(v.to_string())));
                 }
-                if let Some(v) = &filter.age {
-                    fields.push("age = $age");
-                    vars.insert(
-                        "age".to_string(),
-                        Value::Number(Number::Int(*v as i64)),
-                    );        
+                if let Some(v) = &f.age {
+                    filter_fields.push("age = $age");
+                    vars.insert("age".to_string(), Value::Number(Number::Int(*v as i64)));
                 }
-                for (i, el) in fields.iter().enumerate() {
+                for (i, el) in filter_fields.iter().enumerate() {
+                    if i == 0 {
+                        ast.push_str(" WHERE ");
+                    }
                     if i > 0 {
                         ast.push_str(" AND ");
                     }
                     ast.push_str(el);
                 }
             }
-            None => {
-              ast = "SELECT * FROM person".to_string();
-          }
+            // TODO: use if let
+            _ => {
+                // ast = "SELECT * FROM person".to_string();
+            }
         }
 
         // execute query
-        let res = db.execute(ast.as_str(), ses, Some(vars), false).await.unwrap();
+        let res = db
+            .execute(ast.as_str(), ses, Some(vars), false)
+            .await
+            .unwrap();
         // get query execute result
         let data = &res[0].result.as_ref().to_owned();
         // get surrealdb value
@@ -298,7 +300,7 @@ impl QueryRoot {
         debug!("value is_object: {}", value.is_object());
         debug!("value is_array: {}", value.is_array());
 
-        let mut vec : Vec::<Person> = Vec::new();
+        let mut vec: Vec<Person> = Vec::new();
         if let Value::Array(array) = value {
             // debug!("array: {:?}", array);
             array.into_iter().for_each(|value| {
