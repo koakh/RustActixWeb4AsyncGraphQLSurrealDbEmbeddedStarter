@@ -63,8 +63,8 @@ Content-Type: {{contentType}}
 X-REQUEST-TYPE: {{requestType}}
 // Authorization: Bearer {{authToken}}
 
-query persons($inputFilter: String!) {
-  persons(inputFilter: $inputFilter) {
+query persons($filter: String!) {
+  persons(filter: $filter) {
     id
     name
     age
@@ -76,10 +76,10 @@ query persons($inputFilter: String!) {
 
 {
   // use thing id without table
-  "inputFilter": {
-    "id": "tobie",
-    "name": "Tobie",
-    "age": 28
+  "filter": {
+    // "id": "tobie"
+    // "name": "Koakh"
+    // "age": 28
   }
 }
 
