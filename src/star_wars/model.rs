@@ -236,52 +236,43 @@ impl QueryRoot {
             counter: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
-        let mut ast = "SELECT * FROM person ".to_string();
+        let mut ast = "SELECT * FROM person".to_string();
         // init parameters btree
         let mut vars = BTreeMap::new();
-        // if let Some(v) = filter {
-        //     vars.insert(
-        //         "field".to_string(),
-        //         Value::Strand(Strand("name".to_string())),
-        //     );
-        // }
+
+        // TODO: finish pagging with limit and start
+
         // TODO: create a fn helper a TRAIT with a default implementation
-        // requires a sql, get fields for loop from input type
+        // requires a sql, get fields for loop from input
         // TODO use if let here
-        match &filter {
-            Some(f) => {
-                let mut filter_fields: Vec<&str> = Vec::new();
-                if let Some(v) = &f.id {
-                    filter_fields.push("id = $id");
-                    vars.insert(
-                        "id".to_string(),
-                        Value::Thing(Thing {
-                            tb: "person".to_string(),
-                            id: { Id::String(v.to_string()) },
-                        }),
-                    );
-                }
-                if let Some(v) = &f.name {
-                    filter_fields.push("name = $name");
-                    vars.insert("name".to_string(), Value::Strand(Strand(v.to_string())));
-                }
-                if let Some(v) = &f.age {
-                    filter_fields.push("age = $age");
-                    vars.insert("age".to_string(), Value::Number(Number::Int(*v as i64)));
-                }
-                for (i, el) in filter_fields.iter().enumerate() {
-                    if i == 0 {
-                        ast.push_str(" WHERE ");
-                    }
-                    if i > 0 {
-                        ast.push_str(" AND ");
-                    }
-                    ast.push_str(el);
-                }
+        if let Some(f) = filter {
+            let mut filter_fields: Vec<&str> = Vec::new();
+            if let Some(v) = &f.id {
+                filter_fields.push("id = $id");
+                vars.insert(
+                    "id".to_string(),
+                    Value::Thing(Thing {
+                        tb: "person".to_string(),
+                        id: { Id::String(v.to_string()) },
+                    }),
+                );
             }
-            // TODO: use if let
-            _ => {
-                // ast = "SELECT * FROM person".to_string();
+            if let Some(v) = &f.name {
+                filter_fields.push("name = $name");
+                vars.insert("name".to_string(), Value::Strand(Strand(v.to_string())));
+            }
+            if let Some(v) = &f.age {
+                filter_fields.push("age = $age");
+                vars.insert("age".to_string(), Value::Number(Number::Int(*v as i64)));
+            }
+            for (i, el) in filter_fields.iter().enumerate() {
+                if i == 0 {
+                    ast.push_str(" WHERE ");
+                }
+                if i > 0 {
+                    ast.push_str(" AND ");
+                }
+                ast.push_str(el);
             }
         }
 
