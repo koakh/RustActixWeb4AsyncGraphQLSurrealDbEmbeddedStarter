@@ -3,8 +3,9 @@ use std::collections::BTreeMap;
 use async_graphql::connection::{query, Connection, Edge, EmptyFields};
 use async_graphql::{Context, Enum, FieldResult, Interface, Object};
 use log::debug;
-use surrealdb::sql::{Id, Number, Strand, Thing};
+use surrealdb::sql::{thing, Id, Number, Strand, Thing};
 use surrealdb::{sql::Value, Datastore};
+// use surrealdb::sql::thing;
 
 use crate::app::AppStateGlobal;
 use crate::db::{InputFilter, Person};
@@ -251,6 +252,8 @@ impl QueryRoot {
                 filter_fields.push("id = $id");
                 vars.insert(
                     "id".to_string(),
+                    // thing(format!("{}:{}", "person", v).as_str()),
+                    // TODO:: you can use `surrealdb::sql::thing("table:id")` instead of manually constructing `Value::Thing`
                     Value::Thing(Thing {
                         tb: "person".to_string(),
                         id: { Id::String(v.to_string()) },

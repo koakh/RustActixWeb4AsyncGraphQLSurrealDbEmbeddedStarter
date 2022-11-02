@@ -184,3 +184,70 @@ https://discordapp.com/channels/902568124350599239/1014970959461105664/103606618
 
 The Response Value is in every case an Value::Array. If you want to select an single record by its id using select $ID or whatever you would get an array which contains just the single record. If the record does not exist the array would be empty. For handling this just do value.into_iter().next()
 
+
+
+TODO: 
+sugestion of code improvement from BLucky
+https://discordapp.com/channels/902568124350599239/1036366380968194128/1036545636172054608
+
+```rust
+pub async fn create_user(
+    username: String,
+    password: String,
+    ds: Datastore,
+    sess: &Session,
+) -> Result<String> {
+    let sql = "CREATE $id set password = crypto::argon2::generate($password)";
+    let vars = Vars::from([
+        ("id".into(), thing(&format!("user:{username}"))?.into()),
+        ("password".into(), password.into()),
+    ]);
+    println!("{vars:#?}");
+    let ress = ds.execute(sql, sess, Some(vars), false).await?;
+    println!("{ress:#?}");
+    Ok("no_id".into())
+}
+```
+
+TODO: 
+sugestion of code improvement from BLucky
+https://discordapp.com/channels/902568124350599239/1014970959461105664/1036552022394142771
+
+```rust
+let mut ast = "SELECT * FROM person".to_string();
+// init parameters btree
+let mut vars = BTreeMap::new();
+if let Some(f) = filter {
+    let mut filter_fields: Vec<&str> = Vec::new();
+    if let Some(v) = &f.id {
+        filter_fields.push("id = $id");
+        vars.insert(
+            "id".to_string(),
+            Value::Thing(Thing {
+                tb: "person".to_string(),
+                id: { Id::String(v.to_string()) },
+            }),
+        );
+    }
+    if let Some(v) = &f.name {
+        filter_fields.push("name = $name");
+        vars.insert("name".to_string(), Value::Strand(Strand(v.to_string())));
+    }
+    if let Some(v) = &f.age {
+        filter_fields.push("age = $age");
+        vars.insert("age".to_string(), Value::Number(Number::Int(*v as i64)));
+    }
+    for (i, el) in filter_fields.iter().enumerate() {
+        if i == 0 {
+            ast.push_str(" WHERE ");
+        }
+        if i > 0 {
+            ast.push_str(" AND ");
+        }
+        ast.push_str(el);
+    }
+}
+```
+
+by the way you can use `surrealdb::sql::thing("table:id")` instead of manually constructing `Value::Thing`
+(example: `vars.insert("id".into(), thing(&format!("person:"{v}"))?.into()` to create a `String` of `person:` and the contents of v, then get a reference to it to implicitly cast the String into &str, and then pass it to `thing()`, handle the `Result` and then cast the value with `.into())`
