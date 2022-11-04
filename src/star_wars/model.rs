@@ -4,11 +4,12 @@ use async_graphql::connection::{query, Connection, Edge, EmptyFields};
 use async_graphql::{Context, Enum, FieldResult, Interface, Object};
 use log::debug;
 use surrealdb::sql::{thing, Id, Number, Strand, Thing};
+use surrealdb::Session;
 use surrealdb::{sql::Value, Datastore};
 // use surrealdb::sql::thing;
 
 use crate::app::AppStateGlobal;
-use crate::db::{InputFilter, Person};
+use crate::db::{InputFilter, Person, PersonConnection, PersonEdge};
 
 use super::StarWars;
 
@@ -189,6 +190,7 @@ impl QueryRoot {
             session: ses,
             counter: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
+
         // prepare query
         let ast = "SELECT * FROM $id".to_string();
         // type inference lets us omit an explicit type signature (which would be `BTreeMap<&str, &str>` in this example).
@@ -229,8 +231,9 @@ impl QueryRoot {
         before: Option<String>,
         first: Option<i32>,
         last: Option<i32>,
-    ) -> Vec<Person> {
-    // ) -> FieldResult<Connection<usize, Human, EmptyFields, EmptyFields>> {
+        // ) -> Vec<Person> {
+        // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
+    ) -> FieldResult<PersonConnection> {
         // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
         let AppStateGlobal {
             datastore: db,
@@ -238,75 +241,36 @@ impl QueryRoot {
             counter: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
-        let mut ast = "SELECT * FROM person".to_string();
-        // init parameters btree
-        let mut vars = BTreeMap::new();
+        // query_persons(after, before, first, last, db, ses, filter)
+        //     .await
+        //     .map(|conn| conn.map_node(Person))
 
-        // TODO: finish pagging with limit and start
+        // let server_ctx = ctx.data::<Arc<ServerContext>>()?;
+        // let user_edges = server_ctx
+        //     .user_service
+        //     .find_users(first, after.clone(), last, before.clone())
+        //     .await?;
 
-        // TODO: create a fn helper a TRAIT with a default implementation
-        // requires a sql, get fields for loop from input
-        // TODO use if let here
-        if let Some(f) = filter {
-            let mut filter_fields: Vec<&str> = Vec::new();
-            if let Some(v) = &f.id {
-                filter_fields.push("id = $id");
-                vars.insert(
-                    "id".to_string(),
-                    // thing(format!("{}:{}", "person", v).as_str()),
-                    // TODO:: you can use `surrealdb::sql::thing("table:id")` instead of manually constructing `Value::Thing`
-                    Value::Thing(Thing {
-                        tb: "person".to_string(),
-                        id: { Id::String(v.to_string()) },
-                    }),
-                );
-            }
-            if let Some(v) = &f.name {
-                filter_fields.push("name = $name");
-                vars.insert("name".to_string(), Value::Strand(Strand(v.to_string())));
-            }
-            if let Some(v) = &f.age {
-                filter_fields.push("age = $age");
-                vars.insert("age".to_string(), Value::Number(Number::Int(*v as i64)));
-            }
-            for (i, el) in filter_fields.iter().enumerate() {
-                if i == 0 {
-                    ast.push_str(" WHERE ");
-                }
-                if i > 0 {
-                    ast.push_str(" AND ");
-                }
-                ast.push_str(el);
-            }
-        }
+        let persons = query_persons(&after, &before, first, last, db, ses, filter).await;
+        // use into_iter to dereference
+        // required a mplicit type to use collect
+        let edges: Vec<PersonEdge> = persons.into_iter().map(|person| PersonEdge{
+            cursor: person.id.clone(),
+            node: person,
+        }).collect();
 
-        // execute query
-        let res = db
-            .execute(ast.as_str(), ses, Some(vars), false)
-            .await
-            .unwrap();
-        // get query execute result
-        let data = &res[0].result.as_ref().to_owned();
-        // get surrealdb value
-        // using single() we will get only the first record,
-        // to get array don't use single(), and after it is_array will be true
-        // let value = data.unwrap().single().to_owned();
-        let value = data.unwrap().to_owned();
-        debug!("value is_object: {}", value.is_object());
-        debug!("value is_array: {}", value.is_array());
+        // let edges: Vec<PersonEdge> = person_edges.into_iter().map(|user| user.into()).collect();
+        // let edges: Vec<PersonEdge> = query_persons(after, before, first, last, db, ses, filter);
 
-        let mut vec: Vec<Person> = Vec::new();
-        if let Value::Array(array) = value {
-            // debug!("array: {:?}", array);
-            array.into_iter().for_each(|value| {
-                debug!("surreal value {:?}", value);
-                let person: Person = value.into();
-                vec.push(person);
-            });
-            // debug!("surreal vec {:?}", vec);
-        }
+        let person_connection = PersonConnection {
+            edges,
+            after,
+            before,
+            first,
+            last,
+        };
 
-        vec
+        Ok(person_connection)
     }
 }
 
@@ -375,4 +339,86 @@ async fn query_characters(
         },
     )
     .await
+}
+
+// TOOD: move to repository
+async fn query_persons(
+    after: &Option<String>,
+    before: &Option<String>,
+    first: Option<i32>,
+    last: Option<i32>,
+    db: &Datastore,
+    ses: &Session,
+    filter: Option<InputFilter>,
+    // ) -> FieldResult<Connection<usize, usize, EmptyFields, EmptyFields>> {
+) -> Vec<Person> {
+    let mut ast = "SELECT * FROM person".to_string();
+    // init parameters btree
+    let mut vars = BTreeMap::new();
+
+    // TODO: finish pagging with limit and start
+
+    // TODO: create a fn helper a TRAIT with a default implementation
+    // requires a sql, get fields for loop from input
+    // TODO use if let here
+    if let Some(f) = filter {
+        let mut filter_fields: Vec<&str> = Vec::new();
+        if let Some(v) = &f.id {
+            filter_fields.push("id = $id");
+            vars.insert(
+                "id".to_string(),
+                // thing(format!("{}:{}", "person", v).as_str()),
+                // TODO:: you can use `surrealdb::sql::thing("table:id")` instead of manually constructing `Value::Thing`
+                Value::Thing(Thing {
+                    tb: "person".to_string(),
+                    id: { Id::String(v.to_string()) },
+                }),
+            );
+        }
+        if let Some(v) = &f.name {
+            filter_fields.push("name = $name");
+            vars.insert("name".to_string(), Value::Strand(Strand(v.to_string())));
+        }
+        if let Some(v) = &f.age {
+            filter_fields.push("age = $age");
+            vars.insert("age".to_string(), Value::Number(Number::Int(*v as i64)));
+        }
+        for (i, el) in filter_fields.iter().enumerate() {
+            if i == 0 {
+                ast.push_str(" WHERE ");
+            }
+            if i > 0 {
+                ast.push_str(" AND ");
+            }
+            ast.push_str(el);
+        }
+    }
+
+    // execute query
+    let res = db
+        .execute(ast.as_str(), &ses, Some(vars), false)
+        .await
+        .unwrap();
+    // get query execute result
+    let data = &res[0].result.as_ref().to_owned();
+    // get surrealdb value
+    // using single() we will get only the first record,
+    // to get array don't use single(), and after it is_array will be true
+    // let value = data.unwrap().single().to_owned();
+    let value = data.unwrap().to_owned();
+    debug!("value is_object: {}", value.is_object());
+    debug!("value is_array: {}", value.is_array());
+
+    let mut vec: Vec<Person> = Vec::new();
+    if let Value::Array(array) = value {
+        // debug!("array: {:?}", array);
+        array.into_iter().for_each(|value| {
+            debug!("surreal value {:?}", value);
+            let person: Person = value.into();
+            vec.push(person);
+        });
+        // debug!("surreal vec {:?}", vec);
+    }
+
+    vec
 }

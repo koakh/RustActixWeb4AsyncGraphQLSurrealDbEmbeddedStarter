@@ -265,3 +265,5 @@ by the way you can use `surrealdb::sql::thing("table:id")` instead of manually c
 
 - https://github.com/async-graphql/async-graphql/issues/974#issuecomment-1192284485
 - https://github.com/azzamsa/tin
+- https://github.com/azzamsa/tin/blob/master/src/user/resolver.rs
+- https://github.com/azzamsa/tin/blob/master/src/user/model/mod.rs
