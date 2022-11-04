@@ -16,7 +16,8 @@ $ bin/tiup playground --tag surrealdb-kv --mode tikv-slim --pd 3 --kv 3
 
 # new window
 $ cd ~/.surrealdb/
-$ ./sdbstart.sh 
+# surrealdb
+$ ./sdbstart.sh
 # outcome
 [2022-10-29 22:14:33] INFO  surrealdb::iam Root authentication is enabled
 [2022-10-29 22:14:33] INFO  surrealdb::iam Root username is 'root'
@@ -39,6 +40,14 @@ $ ./sdbsql.sh
 CREATE person:tobie CONTENT { name: 'Tobie', meta_data: { field: 'some joe tobie' } };
 CREATE person:jamie CONTENT { name: 'Jamie', meta_data: { field: 'some joe jamie' } };
 CREATE person:koakh CONTENT { name: 'Koakh', meta_data: { field: 'some joe koakh' } };
+CREATE person:pelu CONTENT { name: 'Pelo', meta_data: { field: 'some joe pelu' } };
+CREATE person:jomo CONTENT { name: 'Jomo', meta_data: { field: 'some joe jomo' } };
+CREATE person:funi CONTENT { name: 'Funi', meta_data: { field: 'some joe funi' } };
+CREATE person:joni CONTENT { name: 'Joni', meta_data: { field: 'some joe joni' } };
+CREATE person:devy CONTENT { name: 'Devy', meta_data: { field: 'some joe devy' } };
+CREATE person:peti CONTENT { name: 'Peti', meta_data: { field: 'some joe peti' } };
+CREATE person:andy CONTENT { name: 'Andy', meta_data: { field: 'some joe andy' } };
+CREATE person:hulk CONTENT { name: 'Hulk', meta_data: { field: 'some joe hulk' } };
 
 # project
 $ cd ~/Development/examples4_async_graphql/
@@ -251,3 +260,8 @@ if let Some(f) = filter {
 
 by the way you can use `surrealdb::sql::thing("table:id")` instead of manually constructing `Value::Thing`
 (example: `vars.insert("id".into(), thing(&format!("person:"{v}"))?.into()` to create a `String` of `person:` and the contents of v, then get a reference to it to implicitly cast the String into &str, and then pass it to `thing()`, handle the `Result` and then cast the value with `.into())`
+
+## Relay Pagination 
+
+- https://github.com/async-graphql/async-graphql/issues/974#issuecomment-1192284485
+- https://github.com/azzamsa/tin

@@ -230,6 +230,7 @@ impl QueryRoot {
         first: Option<i32>,
         last: Option<i32>,
     ) -> Vec<Person> {
+    // ) -> FieldResult<Connection<usize, Human, EmptyFields, EmptyFields>> {
         // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
         let AppStateGlobal {
             datastore: db,
