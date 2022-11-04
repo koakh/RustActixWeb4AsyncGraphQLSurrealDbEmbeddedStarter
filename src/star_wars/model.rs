@@ -360,7 +360,8 @@ async fn query_persons(
 
     // TODO: create a fn helper a TRAIT with a default implementation
     // requires a sql, get fields for loop from input
-    // TODO use if let here
+    
+    // TODO REFACTOR to generic function that resturns FILTER SQL PART that will be pushed to ast
     if let Some(f) = filter {
         let mut filter_fields: Vec<&str> = Vec::new();
         if let Some(v) = &f.id {
