@@ -106,6 +106,11 @@ impl PersonConnection {
             counter: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
+        let mut ast = "SELECT * FROM person".to_string();
+        // init parameters btree
+        let mut vars = BTreeMap::new();
+    
+
         Ok(PageInfo{
             has_next_page: true,
             has_previous_page: true,
