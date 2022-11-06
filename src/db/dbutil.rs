@@ -1,3 +1,51 @@
+use std::collections::BTreeMap;
+
+use surrealdb::sql::{Id, Number, Strand, Thing, Value};
+
+use super::InputFilter;
+
+// this witll mutate ast and vars
+// TODO add to default trail implementation for models
+pub fn add_filter_to_ast(
+    table: String,
+    filter: &Option<InputFilter>,
+    ast: &mut String,
+    vars: &mut BTreeMap<String, Value>,
+) {
+    if let Some(f) = filter {
+        let mut filter_fields: Vec<&str> = Vec::new();
+        if let Some(v) = &f.id {
+            filter_fields.push("id = $id");
+            vars.insert(
+                "id".to_string(),
+                // thing(format!("{}:{}", "person", v).as_str()),
+                // TODO:: you can use `surrealdb::sql::thing("table:id")` instead of manually constructing `Value::Thing`
+                Value::Thing(Thing {
+                    tb: table,
+                    id: { Id::String(v.to_string()) },
+                }),
+            );
+        }
+        if let Some(v) = &f.name {
+            filter_fields.push("name = $name");
+            vars.insert("name".to_string(), Value::Strand(Strand(v.to_string())));
+        }
+        if let Some(v) = &f.age {
+            filter_fields.push("age = $age");
+            vars.insert("age".to_string(), Value::Number(Number::Int(*v as i64)));
+        }
+        for (i, el) in filter_fields.iter().enumerate() {
+            if i == 0 {
+                ast.push_str(" WHERE ");
+            }
+            if i > 0 {
+                ast.push_str(" AND ");
+            }
+            ast.push_str(el);
+        }
+    }
+}
+
 // old dbutil with full surrealdb::sql::Value match values with all match arms
 // before refactor all code to be inside src/db/models/person.rs
 

@@ -1,7 +1,9 @@
+use std::collections::BTreeMap;
+
 use async_graphql::{SimpleObject, Result, InputObject, ComplexObject, Context, connection::PageInfo};
 use surrealdb::sql::Value;
 
-use crate::app::AppStateGlobal;
+use crate::{app::AppStateGlobal, db::add_filter_to_ast};
 
 #[derive(InputObject)]
 pub struct InputFilter {
@@ -100,16 +102,20 @@ impl PersonConnection {
         //     .await?;
         // Ok(page_info.into())
 
+        // TODO: here we get self that have first, after, last and before
+        // we can use this to get has_next, has_previous_page, 
+        // and calculate cursors with base64 from example
+        // TODO: add to add_filter_to_ast limit and start to use here
+
         let AppStateGlobal {
             datastore: db,
             session: ses,
             counter: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
-        let mut ast = "SELECT * FROM person".to_string();
-        // init parameters btree
-        let mut vars = BTreeMap::new();
-    
+        // let mut ast = "SELECT * FROM person".to_string();
+        // let mut vars = BTreeMap::new();    
+        // add_filter_to_ast(&filter, &ast, &vars);
 
         Ok(PageInfo{
             has_next_page: true,

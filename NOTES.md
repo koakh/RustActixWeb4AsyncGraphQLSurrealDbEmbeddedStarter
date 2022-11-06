@@ -73,6 +73,10 @@ now open <http://localhost:8282/playground>
 
 - [Rust from_into](https://doc.rust-lang.org/rust-by-example/conversion/from_into.html)
 
+### Awesome Tutorials
+
+- https://github.com/bkonkle/rust-example-caster-api
+
 ## Install SurrealDB Crate
 
 ```shell
@@ -263,7 +267,10 @@ by the way you can use `surrealdb::sql::thing("table:id")` instead of manually c
 
 ## Relay Pagination 
 
+- https://relay.dev/graphql/connections.htm
+
 - https://github.com/async-graphql/async-graphql/issues/974#issuecomment-1192284485
 - https://github.com/azzamsa/tin
 - https://github.com/azzamsa/tin/blob/master/src/user/resolver.rs
 - https://github.com/azzamsa/tin/blob/master/src/user/model/mod.rs
+- https://github.com/azzamsa/tin/blob/master/src/user/entities.rs

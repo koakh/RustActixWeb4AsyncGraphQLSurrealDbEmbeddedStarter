@@ -9,7 +9,7 @@ use surrealdb::{sql::Value, Datastore};
 // use surrealdb::sql::thing;
 
 use crate::app::AppStateGlobal;
-use crate::db::{InputFilter, Person, PersonConnection, PersonEdge};
+use crate::db::{InputFilter, Person, PersonConnection, PersonEdge, add_filter_to_ast};
 
 use super::StarWars;
 
@@ -259,9 +259,6 @@ impl QueryRoot {
             node: person,
         }).collect();
 
-        // let edges: Vec<PersonEdge> = person_edges.into_iter().map(|user| user.into()).collect();
-        // let edges: Vec<PersonEdge> = query_persons(after, before, first, last, db, ses, filter);
-
         let person_connection = PersonConnection {
             edges,
             after,
@@ -354,46 +351,9 @@ async fn query_persons(
 ) -> Vec<Person> {
     let mut ast = "SELECT * FROM person".to_string();
     // init parameters btree
-    let mut vars = BTreeMap::new();
-
-    // TODO: finish pagging with limit and start
-
-    // TODO: create a fn helper a TRAIT with a default implementation
-    // requires a sql, get fields for loop from input
-    
-    // TODO REFACTOR to generic function that resturns FILTER SQL PART that will be pushed to ast
-    if let Some(f) = filter {
-        let mut filter_fields: Vec<&str> = Vec::new();
-        if let Some(v) = &f.id {
-            filter_fields.push("id = $id");
-            vars.insert(
-                "id".to_string(),
-                // thing(format!("{}:{}", "person", v).as_str()),
-                // TODO:: you can use `surrealdb::sql::thing("table:id")` instead of manually constructing `Value::Thing`
-                Value::Thing(Thing {
-                    tb: "person".to_string(),
-                    id: { Id::String(v.to_string()) },
-                }),
-            );
-        }
-        if let Some(v) = &f.name {
-            filter_fields.push("name = $name");
-            vars.insert("name".to_string(), Value::Strand(Strand(v.to_string())));
-        }
-        if let Some(v) = &f.age {
-            filter_fields.push("age = $age");
-            vars.insert("age".to_string(), Value::Number(Number::Int(*v as i64)));
-        }
-        for (i, el) in filter_fields.iter().enumerate() {
-            if i == 0 {
-                ast.push_str(" WHERE ");
-            }
-            if i > 0 {
-                ast.push_str(" AND ");
-            }
-            ast.push_str(el);
-        }
-    }
+    let mut vars: BTreeMap<String, Value> = BTreeMap::new();
+    // inject filter in ast
+    add_filter_to_ast("person".to_string(), &filter, &mut ast, &mut vars);
 
     // execute query
     let res = db
@@ -420,6 +380,6 @@ async fn query_persons(
         });
         // debug!("surreal vec {:?}", vec);
     }
-
+    // resturn record vector
     vec
 }
