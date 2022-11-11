@@ -1,6 +1,8 @@
 use std::collections::BTreeMap;
 
-use async_graphql::{SimpleObject, Result, InputObject, ComplexObject, Context, connection::PageInfo};
+use async_graphql::{
+    connection::PageInfo, ComplexObject, Context, InputObject, Result, SimpleObject, Enum,
+};
 use surrealdb::sql::Value;
 
 use crate::{app::AppStateGlobal, db::add_filter_to_ast};
@@ -12,6 +14,18 @@ pub struct InputFilter {
     pub age: Option<i8>,
 }
 
+#[derive(Enum, Copy, Clone, Eq, PartialEq)]
+pub enum Order {
+    Id,
+    Name,
+    Age,
+}
+
+// #[derive(InputObject)]
+// pub struct InputOrder {
+//     pub order: Order,
+// }
+
 #[derive(Debug, SimpleObject)]
 pub struct Person {
     pub id: String,
@@ -20,6 +34,7 @@ pub struct Person {
     pub meta_data: Option<MetaData>,
 }
 
+// from surrealdb value to struct
 impl From<Value> for Person {
     fn from(value: Value) -> Self {
         // require to initialize model
@@ -43,7 +58,7 @@ impl From<Value> for Person {
                 }
             }
         }
-        
+
         model
     }
 }
@@ -53,6 +68,7 @@ pub struct MetaData {
     pub field: Option<String>,
 }
 
+// from surrealdb value to struct
 impl From<Value> for MetaData {
     fn from(value: Value) -> Self {
         let mut model = Self { field: None };
@@ -103,7 +119,7 @@ impl PersonConnection {
         // Ok(page_info.into())
 
         // TODO: here we get self that have first, after, last and before
-        // we can use this to get has_next, has_previous_page, 
+        // we can use this to get has_next, has_previous_page,
         // and calculate cursors with base64 from example
         // TODO: add to add_filter_to_ast limit and start to use here
 
@@ -114,10 +130,10 @@ impl PersonConnection {
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
         // let mut ast = "SELECT * FROM person".to_string();
-        // let mut vars = BTreeMap::new();    
+        // let mut vars = BTreeMap::new();
         // add_filter_to_ast(&filter, &ast, &vars);
 
-        Ok(PageInfo{
+        Ok(PageInfo {
             has_next_page: true,
             has_previous_page: true,
             start_cursor: Some("start".to_string()),
