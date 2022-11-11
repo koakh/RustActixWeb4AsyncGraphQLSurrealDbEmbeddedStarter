@@ -9,7 +9,7 @@ use surrealdb::{sql::Value, Datastore};
 // use surrealdb::sql::thing;
 
 use crate::app::AppStateGlobal;
-use crate::db::{InputFilter, Person, PersonConnection, PersonEdge, add_filter_to_ast};
+use crate::db::{add_filter_to_ast, InputFilter, Order as PersonOrder, Person, PersonConnection, PersonEdge};
 
 use super::StarWars;
 
@@ -223,10 +223,12 @@ impl QueryRoot {
         Some(person)
     }
 
+    #[allow(clippy::too_many_arguments)]
     async fn persons(
         &self,
         ctx: &Context<'_>,
         #[graphql(desc = "custom filter")] filter: Option<InputFilter>,
+        #[graphql(desc = "custom order")] order: Option<PersonOrder>,
         after: Option<String>,
         before: Option<String>,
         first: Option<i32>,
@@ -251,13 +253,16 @@ impl QueryRoot {
         //     .find_users(first, after.clone(), last, before.clone())
         //     .await?;
 
-        let persons = query_persons(&after, &before, first, last, db, ses, filter).await;
+        let persons = query_persons(first, &after, last, &before, db, ses, filter).await;
         // use into_iter to dereference
         // required a mplicit type to use collect
-        let edges: Vec<PersonEdge> = persons.into_iter().map(|person| PersonEdge{
-            cursor: person.id.clone(),
-            node: person,
-        }).collect();
+        let edges: Vec<PersonEdge> = persons
+            .into_iter()
+            .map(|person| PersonEdge {
+                cursor: person.id.clone(),
+                node: person,
+            })
+            .collect();
 
         let person_connection = PersonConnection {
             edges,
@@ -340,10 +345,10 @@ async fn query_characters(
 
 // TOOD: move to repository
 async fn query_persons(
-    after: &Option<String>,
-    before: &Option<String>,
     first: Option<i32>,
+    after: &Option<String>,
     last: Option<i32>,
+    before: &Option<String>,
     db: &Datastore,
     ses: &Session,
     filter: Option<InputFilter>,

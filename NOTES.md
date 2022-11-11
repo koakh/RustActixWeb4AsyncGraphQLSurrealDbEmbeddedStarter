@@ -48,6 +48,11 @@ CREATE person:devy CONTENT { name: 'Devy', meta_data: { field: 'some joe devy' }
 CREATE person:peti CONTENT { name: 'Peti', meta_data: { field: 'some joe peti' } };
 CREATE person:andy CONTENT { name: 'Andy', meta_data: { field: 'some joe andy' } };
 CREATE person:hulk CONTENT { name: 'Hulk', meta_data: { field: 'some joe hulk' } };
+CREATE person:pini CONTENT { name: 'Pini', meta_data: { field: 'some joe pini' } };
+CREATE person:dian CONTENT { name: 'Dian', meta_data: { field: 'some joe dian' } };
+CREATE person:jack CONTENT { name: 'Jack', meta_data: { field: 'some joe jack' } };
+CREATE person:jill CONTENT { name: 'Jill', meta_data: { field: 'some joe jill' } };
+CREATE person:pete CONTENT { name: 'Pete', meta_data: { field: 'some joe pete' } };
 
 # project
 $ cd ~/Development/examples4_async_graphql/
@@ -58,6 +63,24 @@ $ make run
 ```
 
 now open <http://localhost:8282/playground>
+
+## Queries
+
+### Count
+
+```sql
+$ SELECT count() FROM person GROUP BY ALL;
+$ SELECT count() FROM person WHERE id = 'person:tobie' GROUP BY ALL;
+-- start page 1 split by 4
+$ SELECT name FROM person ORDER BY name LIMIT 4 START 0;
+```
+
+### Relay Pagination
+
+```sql
+-- after if
+SELECT id, name FROM person WHERE id > person:jamie ORDER BY name LIMIT BY 4 START AT 4;
+```
 
 ## Links
 
@@ -269,8 +292,14 @@ by the way you can use `surrealdb::sql::thing("table:id")` instead of manually c
 
 - https://relay.dev/graphql/connections.htm
 
+- https://www.pdftron.com/blog/graphql/implementing-graphql-pagination/
+
 - https://github.com/async-graphql/async-graphql/issues/974#issuecomment-1192284485
+
+simply awesome async_graphql project
+
 - https://github.com/azzamsa/tin
-- https://github.com/azzamsa/tin/blob/master/src/user/resolver.rs
 - https://github.com/azzamsa/tin/blob/master/src/user/model/mod.rs
+- https://github.com/azzamsa/tin/blob/master/src/user/resolver.rs
 - https://github.com/azzamsa/tin/blob/master/src/user/entities.rs
+- https://github.com/azzamsa/tin/blob/master/src/user/repository/find_all_users.rs

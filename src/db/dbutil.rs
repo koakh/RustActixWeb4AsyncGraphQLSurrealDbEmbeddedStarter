@@ -2,18 +2,21 @@ use std::collections::BTreeMap;
 
 use surrealdb::sql::{Id, Number, Strand, Thing, Value};
 
-use super::InputFilter;
+use super::InputFilter as PersonInputFilter;
 
-// this witll mutate ast and vars
+// TODO: this is related to person, move to person model
+
+// this will mutate ast and vars
 // TODO add to default trail implementation for models
 pub fn add_filter_to_ast(
     table: String,
-    filter: &Option<InputFilter>,
+    filter: &Option<PersonInputFilter>,
     ast: &mut String,
     vars: &mut BTreeMap<String, Value>,
 ) {
     if let Some(f) = filter {
         let mut filter_fields: Vec<&str> = Vec::new();
+        // id
         if let Some(v) = &f.id {
             filter_fields.push("id = $id");
             vars.insert(
@@ -26,18 +29,23 @@ pub fn add_filter_to_ast(
                 }),
             );
         }
+        // name
         if let Some(v) = &f.name {
             filter_fields.push("name = $name");
             vars.insert("name".to_string(), Value::Strand(Strand(v.to_string())));
         }
+        // age
         if let Some(v) = &f.age {
             filter_fields.push("age = $age");
             vars.insert("age".to_string(), Value::Number(Number::Int(*v as i64)));
         }
+        // loop filter fields and inject conditions on ast
         for (i, el) in filter_fields.iter().enumerate() {
+            // if is first where condition prefix with WHERE
             if i == 0 {
                 ast.push_str(" WHERE ");
             }
+            // add where condition
             if i > 0 {
                 ast.push_str(" AND ");
             }
