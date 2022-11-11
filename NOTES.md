@@ -1,5 +1,11 @@
 # NOTES
 
+## Prerequisites
+
+- rust
+- surrealdb cli
+- tikv
+
 ## TLDR
 
 ```shell
