@@ -2,9 +2,110 @@
 
 ## Prerequisites
 
-- rust
+- rust + crago
 - surrealdb cli
 - tikv
+- ubuntu 20.04
+  > current tumbleweed and ubuntu 22.04 always fails building grpcio-sys v0.8.1, check `SurrealDB - Embedded` Notes
+
+### Build Surrealdb
+
+- https://github.com/surrealdb/surrealdb/blob/main/doc/BUILDING.md
+- https://linuxhint.com/install-protobuf-ubuntu/
+
+```shell
+# Setup
+$ sudo apt-get -y update &&
+    sudo apt-get -y install \
+        curl \
+        llvm \
+        cmake \
+        binutils \
+        clang-11 \
+        qemu-user \
+        musl-tools \
+        libssl-dev \
+        pkg-config \
+        build-essential \
+        protobuf-compiler
+# Install rustlang and cargo
+$ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+$ source "$HOME/.cargo/env"
+# Add extra targets for rust
+$ rustup target add x86_64-unknown-linux-gnu
+# Compile for x86_64-unknown-linux-gnu
+$ cargo build --release --locked --target x86_64-unknown-linux-gnu
+
+# clone project
+git clone https://github.com/koakh/RustActixWeb4AsyncGraphQLSurrealDbEmbeddedStarter.git
+make build
+```
+
+### SurrealDb CLi and Tools
+
+```shell
+$ curl -sSf https://install.surrealdb.com | sh
+$ sudo mv /home/mario/.surrealdb/surreal /usr/local/bin
+$ nano ~/.surrealdb/sdbstart.sh 
+```
+
+```shell
+#!/bin/sh
+
+# install
+# curl -sSf https://install.surrealdb.com | sh
+
+# warn, info, debug, trace, full
+LOG_LEVEL=debug
+
+# with docker
+# docker run --name surrealdb -p 8000:8000 surrealdb/surrealdb:1.0.0-beta.7 start -b 0.0.0.0:8000 --log trace memory
+
+# services:
+#   db:
+#     image: surrealdb/surrealdb
+#     command: "start -b 0.0.0.0:8000"
+#     ports:
+#       - 8000:8000
+
+# with tikv: cd ~/.tiup && ./start.sh
+# ./surreal start --log ${LOG_LEVEL} --user root --pass root tikv://127.0.0.1:2379
+
+# inmemory
+# ./surreal start --log ${LOG_LEVEL} --user root --pass root
+
+# rocksDb
+./surreal start --log ${LOG_LEVEL} --user root --pass root file:mydb
+```
+
+```shell
+$ nano ~/.surrealdb/sdbsql.sh
+```
+
+```shell
+#!/bin/sh
+
+./surreal sql --conn http://localhost:8000 --user root --pass root --ns test --db test --pretty
+```
+
+### TiKV
+
+```shell
+$ curl -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
+$ nano ~/.tiup/start.sh
+```
+
+```shell
+#!/bin/sh
+
+# install with 
+# curl -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
+
+# remove data with
+# rm data/surrealdb-kv/ -R
+
+bin/tiup playground --tag surrealdb-kv --mode tikv-slim --pd 3 --kv 3
+```
 
 ## TLDR
 
