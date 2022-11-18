@@ -228,6 +228,7 @@ impl QueryRoot {
         &self,
         ctx: &Context<'_>,
         #[graphql(desc = "custom filter")] filter: Option<InputFilter>,
+        // TODO: use order
         #[graphql(desc = "custom order")] order: Option<PersonOrder>,
         after: Option<String>,
         before: Option<String>,
@@ -343,7 +344,7 @@ async fn query_characters(
     .await
 }
 
-// TOOD: move to repository
+// TODO: move to repository pattern
 async fn query_persons(
     first: Option<i32>,
     after: &Option<String>,

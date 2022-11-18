@@ -61,7 +61,7 @@ CREATE person:jill CONTENT { name: 'Jill', meta_data: { field: 'some joe jill' }
 CREATE person:pete CONTENT { name: 'Pete', meta_data: { field: 'some joe pete' } };
 
 # project
-$ cd ~/Development/examples4_async_graphql/
+$ cd ~/Development/RustActixWeb4AsyncGraphQLSurrealDbEmbeddedStarter/
 $ make run
 # outcome
 [2022-10-29T21:15:39Z TRACE actix_server::worker] Service "actix-web-service-0.0.0.0:8282" is available
@@ -88,6 +88,8 @@ $ SELECT name FROM person ORDER BY name LIMIT 4 START 0;
 SELECT id, name FROM person WHERE id > person:jamie ORDER BY name LIMIT BY 4 START AT 4;
 ```
 
+> check [NOTES_RELAY](NOTES_RELAY.md)
+
 ## Links
 
 ### ActixWeb
@@ -104,7 +106,10 @@ SELECT id, name FROM person WHERE id > person:jamie ORDER BY name LIMIT BY 4 STA
 
 ### Awesome Tutorials
 
-- https://github.com/bkonkle/rust-example-caster-api
+- [Async GraphQL with Rust: Part One ](https://konkle.us/async-graphql-rust-1-introduction/)
+- [bkonkle / rust-example-caster-api](https://github.com/bkonkle/rust-example-caster-api)
+
+> four parts tutorial
 
 ## Install SurrealDB Crate
 
@@ -209,7 +214,6 @@ $ sudo apt-get -y install \
 ## BTreeMap
 
 - https://doc.rust-lang.org/nightly/alloc/collections/btree_map/struct.BTreeMap.html
-
 
 
 

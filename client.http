@@ -63,24 +63,33 @@ Content-Type: {{contentType}}
 X-REQUEST-TYPE: {{requestType}}
 // Authorization: Bearer {{authToken}}
 
-query persons($filter: String!) {
-  persons(filter: $filter) {
-    id
-    name
-    age
-    metaData {
-      field
+query persons($filter: InputFilter, $order: Order) {
+  persons(
+    first: 1,
+    after: "1",
+    filter: $filter,
+    order: $order
+  ) {
+    pageInfo{
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor      
+    }
+    edges{
+      node{
+        id
+        name
+      }
     }
   }
 }
 
 {
-  // use thing id without table
   "filter": {
-    // "id": "tobie"
-    // "name": "Koakh"
-    // "age": 28
-  }
+    "id": "person:tobie"
+  },
+  "order": "ID"
 }
 
 ### SignUpMutation

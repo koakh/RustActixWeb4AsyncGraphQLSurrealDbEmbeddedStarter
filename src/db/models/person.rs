@@ -1,8 +1,9 @@
 use std::collections::BTreeMap;
 
 use async_graphql::{
-    connection::PageInfo, ComplexObject, Context, InputObject, Result, SimpleObject, Enum,
+    connection::PageInfo, ComplexObject, Context, Enum, InputObject, Result, SimpleObject,
 };
+use log::debug;
 use surrealdb::sql::Value;
 
 use crate::{app::AppStateGlobal, db::add_filter_to_ast};
@@ -121,6 +122,15 @@ impl PersonConnection {
         // TODO: here we get self that have first, after, last and before
         // we can use this to get has_next, has_previous_page,
         // and calculate cursors with base64 from example
+        debug!("first: {}", self.first.unwrap());
+        // debug!(
+        //     "first: {}, after: {}, last: {}, before: {}",
+        //     self.first.unwrap(),
+        //     self.after.clone().unwrap(),
+        //     self.last.unwrap(),
+        //     self.before.clone().unwrap()
+        // );
+
         // TODO: add to add_filter_to_ast limit and start to use here
 
         let AppStateGlobal {
@@ -136,6 +146,7 @@ impl PersonConnection {
         Ok(PageInfo {
             has_next_page: true,
             has_previous_page: true,
+            // TODO: use base64 here?
             start_cursor: Some("start".to_string()),
             end_cursor: Some("end".to_string()),
         })
