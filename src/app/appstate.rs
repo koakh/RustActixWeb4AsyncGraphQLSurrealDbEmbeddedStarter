@@ -1,5 +1,5 @@
 use serde::Serialize;
-use std::{cell::Cell, sync::Mutex};
+use std::{cell::Cell, sync::{Mutex, Arc}};
 use surrealdb::{Datastore, Session};
 
 #[derive(Serialize, Debug)]
@@ -15,6 +15,6 @@ pub struct AppStateGlobal {
     // global, used for all workers
     pub counter: Mutex<i32>,
     // surrealdb
-    pub datastore: Datastore,
+    pub datastore: Arc<Datastore>,
     pub session: Session,
 }

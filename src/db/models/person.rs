@@ -6,7 +6,7 @@ use async_graphql::{
 use log::debug;
 use surrealdb::sql::Value;
 
-use crate::{app::AppStateGlobal, db::add_filter_to_ast};
+use crate::{app::AppStateGlobal, db::add_filter_to_ast, relay::Base64Cursor};
 
 #[derive(InputObject)]
 pub struct InputFilter {
@@ -119,10 +119,28 @@ impl PersonConnection {
         //     .await?;
         // Ok(page_info.into())
 
+        // TODO: add to notes destructure Struct with porp alias
+        // destructure AppStateGlobal
+        let AppStateGlobal {
+            datastore: db,
+            session: ses,
+            counter: _,
+        } = &ctx.data_unchecked::<AppStateGlobal>();
+
+        // TODO: add to notes destructure Self
+        // https://stackoverflow.com/questions/43603102/is-it-possible-to-destructure-the-self-argument-of-a-method
+        let &PersonConnection {
+            edges: _,
+            after,
+            before,
+            first,
+            last,
+        } = &self;
+
         // TODO: here we get self that have first, after, last and before
         // we can use this to get has_next, has_previous_page,
         // and calculate cursors with base64 from example
-        debug!("first: {}", self.first.unwrap());
+        // debug!("first: {}", self.first.unwrap());
         // debug!(
         //     "first: {}, after: {}, last: {}, before: {}",
         //     self.first.unwrap(),
@@ -132,12 +150,6 @@ impl PersonConnection {
         // );
 
         // TODO: add to add_filter_to_ast limit and start to use here
-
-        let AppStateGlobal {
-            datastore: db,
-            session: ses,
-            counter: _,
-        } = &ctx.data_unchecked::<AppStateGlobal>();
 
         // let mut ast = "SELECT * FROM person".to_string();
         // let mut vars = BTreeMap::new();
@@ -150,7 +162,74 @@ impl PersonConnection {
             start_cursor: Some("start".to_string()),
             end_cursor: Some("end".to_string()),
         })
+
+        // let mut has_next_query: String = String::new();
+        // let mut has_next_page: bool = false;
+
+        // match (first, after, last, before) {
+        //     // First
+        //     (Some(first), None, None, None) => {
+        //         has_next_query = format!(
+        //             r#"select count(*) > {first} from
+        //              ( select "id" from user_ order by id asc limit {limit} )
+        //            as data"#,
+        //             limit = first + 1
+        //         );
+        //     }
+        //     // First & after,
+        //     (Some(first), Some(after), None, None) => {
+        //         has_next_query = format!(
+        //             r#"select count(*) > {first} from
+        //              ( select "id" from user_ where id > '{after}' order by id asc limit {limit} )
+        //            as data"#,
+        //             limit = first + 1
+        //         );
+        //     }
+        //     _ => (),
+        // };
+
+        // // has_next query
+        // if let Some(_first) = first {
+        //     has_next_page = match sqlx::query(&has_next_query).fetch_one(db).await {
+        //         Err(err) => {
+        //             error!("{}", &err);
+        //             return Err(err.into());
+        //         }
+        //         Ok(row) => row.get(0),
+        //     };
+        // };
+
+        // let (start_cursor, end_cursor) = if !rows.is_empty() {
+        //     let start_cursor = Base64Cursor::new(rows[0].id).encode();
+        //     let end_cursor = Base64Cursor::new(rows[rows.len() - 1].id).encode();
+        //     (Some(start_cursor), Some(end_cursor))
+        // } else {
+        //     (None, None)
+        // };
+
+        // let has_previous_page = self.has_previous_page(rows, last).await?;
+        // let page_info = PageInfo {
+        //     has_next_page,
+        //     has_previous_page,
+        //     start_cursor,
+        //     end_cursor,
+        // };
+
+        // Ok(page_info)
     }
+
+    // pub async fn has_previous_page(
+    //     &self,
+    //     rows: &Vec<Person>,
+    //     last: Option<i32>,
+    // ) -> Result<bool, Error> {
+    //     let mut has_previous_page: bool = false;
+    //     if let Some(last) = last {
+    //         debug!("rows length: {}. last: {}", rows.len(), last);
+    //         has_previous_page = rows.len() > last as usize
+    //     };
+    //     Ok(has_previous_page)
+    // }
 
     // Identifies the total count of items in the connection.
     async fn total_count(&self, ctx: &Context<'_>) -> Result<i64> {
@@ -182,4 +261,15 @@ pub struct PersonEdge {
     pub node: Person,
     // A cursor for use in pagination.
     pub cursor: String,
+}
+
+impl From<Person> for PersonEdge {
+    fn from(person: Person) -> Self {
+        let cursor = Base64Cursor::new(person.id.clone()).encode();
+        let person_model = person.into();
+        Self {
+            node: person_model,
+            cursor,
+        }
+    }
 }

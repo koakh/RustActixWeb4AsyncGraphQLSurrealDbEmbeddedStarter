@@ -74,7 +74,7 @@ query persons($filter: InputFilter, $order: Order) {
       hasPreviousPage
       hasNextPage
       startCursor
-      endCursor      
+      endCursor
     }
     edges{
       node{
@@ -87,7 +87,7 @@ query persons($filter: InputFilter, $order: Order) {
 
 {
   "filter": {
-    "id": "person:tobie"
+  //  "id": "person:tobie"
   },
   "order": "ID"
 }

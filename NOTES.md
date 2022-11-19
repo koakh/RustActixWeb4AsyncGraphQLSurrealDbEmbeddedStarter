@@ -44,8 +44,12 @@ make build
 ### SurrealDb CLi and Tools
 
 ```shell
+# current verwsion
 $ curl -sSf https://install.surrealdb.com | sh
-$ sudo mv /home/mario/.surrealdb/surreal /usr/local/bin
+# nightly version
+$ curl --proto '=https' --tlsv1.2 -sSf https://install.surrealdb.com | sh -s -- --nightly
+# optional
+# sudo mv /home/mario/.surrealdb/surreal /usr/local/bin
 $ nano ~/.surrealdb/sdbstart.sh 
 ```
 
@@ -144,22 +148,39 @@ $ ./sdbsql.sh
 
 # add some seed data
 
-CREATE person:tobie CONTENT { name: 'Tobie', meta_data: { field: 'some joe tobie' } };
-CREATE person:jamie CONTENT { name: 'Jamie', meta_data: { field: 'some joe jamie' } };
-CREATE person:koakh CONTENT { name: 'Koakh', meta_data: { field: 'some joe koakh' } };
-CREATE person:pelu CONTENT { name: 'Pelo', meta_data: { field: 'some joe pelu' } };
-CREATE person:jomo CONTENT { name: 'Jomo', meta_data: { field: 'some joe jomo' } };
-CREATE person:funi CONTENT { name: 'Funi', meta_data: { field: 'some joe funi' } };
-CREATE person:joni CONTENT { name: 'Joni', meta_data: { field: 'some joe joni' } };
-CREATE person:devy CONTENT { name: 'Devy', meta_data: { field: 'some joe devy' } };
-CREATE person:peti CONTENT { name: 'Peti', meta_data: { field: 'some joe peti' } };
-CREATE person:andy CONTENT { name: 'Andy', meta_data: { field: 'some joe andy' } };
-CREATE person:hulk CONTENT { name: 'Hulk', meta_data: { field: 'some joe hulk' } };
-CREATE person:pini CONTENT { name: 'Pini', meta_data: { field: 'some joe pini' } };
-CREATE person:dian CONTENT { name: 'Dian', meta_data: { field: 'some joe dian' } };
-CREATE person:jack CONTENT { name: 'Jack', meta_data: { field: 'some joe jack' } };
-CREATE person:jill CONTENT { name: 'Jill', meta_data: { field: 'some joe jill' } };
-CREATE person:pete CONTENT { name: 'Pete', meta_data: { field: 'some joe pete' } };
+# CREATE person:tobie CONTENT { name: 'Tobie', meta_data: { field: 'some joe tobie' } };
+# CREATE person:jamie CONTENT { name: 'Jamie', meta_data: { field: 'some joe jamie' } };
+# CREATE person:koakh CONTENT { name: 'Koakh', meta_data: { field: 'some joe koakh' } };
+# CREATE person:pelu CONTENT { name: 'Pelo', meta_data: { field: 'some joe pelu' } };
+# CREATE person:jomo CONTENT { name: 'Jomo', meta_data: { field: 'some joe jomo' } };
+# CREATE person:funi CONTENT { name: 'Funi', meta_data: { field: 'some joe funi' } };
+# CREATE person:joni CONTENT { name: 'Joni', meta_data: { field: 'some joe joni' } };
+# CREATE person:devy CONTENT { name: 'Devy', meta_data: { field: 'some joe devy' } };
+# CREATE person:peti CONTENT { name: 'Peti', meta_data: { field: 'some joe peti' } };
+# CREATE person:andy CONTENT { name: 'Andy', meta_data: { field: 'some joe andy' } };
+# CREATE person:hulk CONTENT { name: 'Hulk', meta_data: { field: 'some joe hulk' } };
+# CREATE person:pini CONTENT { name: 'Pini', meta_data: { field: 'some joe pini' } };
+# CREATE person:dian CONTENT { name: 'Dian', meta_data: { field: 'some joe dian' } };
+# CREATE person:jack CONTENT { name: 'Jack', meta_data: { field: 'some joe jack' } };
+# CREATE person:jill CONTENT { name: 'Jill', meta_data: { field: 'some joe jill' } };
+# CREATE person:pete CONTENT { name: 'Pete', meta_data: { field: 'some joe pete' } };
+
+CREATE person CONTENT { name: 'Tobie', age: 30, meta_data: { field: 'some joe tobie' } };
+CREATE person CONTENT { name: 'Jamie', age: 40, meta_data: { field: 'some joe jamie' } };
+CREATE person CONTENT { name: 'Koakh', age: 50, meta_data: { field: 'some joe koakh' } };
+CREATE person CONTENT { name: 'Pelo', age: 50, meta_data: { field: 'some joe pelu' } };
+CREATE person CONTENT { name: 'Jomo', age: 52, meta_data: { field: 'some joe jomo' } };
+CREATE person CONTENT { name: 'Funi', age: 24, meta_data: { field: 'some joe funi' } };
+CREATE person CONTENT { name: 'Joni', age: 56, meta_data: { field: 'some joe joni' } };
+CREATE person CONTENT { name: 'Devy', age: 19, meta_data: { field: 'some joe devy' } };
+CREATE person CONTENT { name: 'Peti', age: 20, meta_data: { field: 'some joe peti' } };
+CREATE person CONTENT { name: 'Andy', age: 20, meta_data: { field: 'some joe andy' } };
+CREATE person CONTENT { name: 'Hulk', age: 29, meta_data: { field: 'some joe hulk' } };
+CREATE person CONTENT { name: 'Pini', age: 84, meta_data: { field: 'some joe pini' } };
+CREATE person CONTENT { name: 'Dian', age: 20, meta_data: { field: 'some joe dian' } };
+CREATE person CONTENT { name: 'Jack', age: 28, meta_data: { field: 'some joe jack' } };
+CREATE person CONTENT { name: 'Jill', age: 14, meta_data: { field: 'some joe jill' } };
+CREATE person CONTENT { name: 'Pete', age: 16, meta_data: { field: 'some joe pete' } };
 
 # project
 $ cd ~/Development/RustActixWeb4AsyncGraphQLSurrealDbEmbeddedStarter/
@@ -410,6 +431,7 @@ by the way you can use `surrealdb::sql::thing("table:id")` instead of manually c
 simply awesome async_graphql project
 
 - https://github.com/azzamsa/tin
+ 
 - https://github.com/azzamsa/tin/blob/master/src/user/model/mod.rs
 - https://github.com/azzamsa/tin/blob/master/src/user/resolver.rs
 - https://github.com/azzamsa/tin/blob/master/src/user/entities.rs

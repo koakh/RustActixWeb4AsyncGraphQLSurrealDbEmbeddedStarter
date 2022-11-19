@@ -9,16 +9,19 @@ use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use std::{
     cell::Cell,
     sync::atomic::{AtomicUsize, Ordering},
-    sync::Mutex,
+    sync::{Mutex, Arc},
 };
 use surrealdb::{Datastore, Session};
 
 mod app;
-mod star_wars;
 mod db;
+mod errors;
+mod relay;
+mod star_wars;
+mod person;
 
-use self::app::{AppState, AppStateGlobal};
-use self::star_wars::{QueryRoot, StarWars, StarWarsSchema};
+use crate::app::{AppState, AppStateGlobal};
+use crate::star_wars::{QueryRoot, StarWars, StarWarsSchema};
 
 static SERVER_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
@@ -47,9 +50,14 @@ async fn main() -> std::io::Result<()> {
     //     session: Session::for_kv().with_ns("test").with_db("test"),
     // });
 
+    let db = Arc::new(Datastore::new("tikv://127.0.0.1:2379").await.unwrap());
+    let person_service = person::Service::new(Arc::clone(&db));
+
     let data = AppStateGlobal {
         counter: Mutex::new(0),
-        datastore: Datastore::new("tikv://127.0.0.1:2379").await.unwrap(),
+        // works
+        datastore: Arc::clone(&db),
+        // datastore: db,
         session: Session::for_kv().with_ns("test").with_db("test"),
     };
 

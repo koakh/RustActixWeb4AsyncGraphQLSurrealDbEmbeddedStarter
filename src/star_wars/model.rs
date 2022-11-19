@@ -230,14 +230,16 @@ impl QueryRoot {
         #[graphql(desc = "custom filter")] filter: Option<InputFilter>,
         // TODO: use order
         #[graphql(desc = "custom order")] order: Option<PersonOrder>,
-        after: Option<String>,
-        before: Option<String>,
         first: Option<i32>,
+        after: Option<String>,
         last: Option<i32>,
+        before: Option<String>,
         // ) -> Vec<Person> {
         // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
     ) -> FieldResult<PersonConnection> {
         // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
+        
+        // destruct AppStateGlobal
         let AppStateGlobal {
             datastore: db,
             session: ses,
@@ -378,7 +380,7 @@ async fn query_persons(
 
     let mut vec: Vec<Person> = Vec::new();
     if let Value::Array(array) = value {
-        // debug!("array: {:?}", array);
+        debug!("array: {:?}", array);
         array.into_iter().for_each(|value| {
             debug!("surreal value {:?}", value);
             let person: Person = value.into();
@@ -386,6 +388,6 @@ async fn query_persons(
         });
         // debug!("surreal vec {:?}", vec);
     }
-    // resturn record vector
+    // return record vector
     vec
 }
