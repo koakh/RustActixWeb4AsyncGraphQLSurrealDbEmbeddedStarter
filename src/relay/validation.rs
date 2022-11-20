@@ -1,15 +1,17 @@
 use uuid::Uuid;
 
 use crate::{
-    errors::{MissingFirstAndLastPaginationArguments, PassedFirstAndLastPaginationArguments},
-    relay::Base64Cursor,
+    errors::app::Error::{
+        MissingFirstAndLastPaginationArguments, PassedFirstAndLastPaginationArguments,
+    },
+    relay::base_64_cursor::Base64Cursor,
 };
 
 /// Parse `after` and `befor` to cursor
 pub fn convert_params(
     after: Option<String>,
     before: Option<String>,
-// ) -> Result<(Option<Uuid>, Option<Uuid>), crate::errors::Error> {    
+    // ) -> Result<(Option<Uuid>, Option<Uuid>), crate::errors::Error> {
 ) -> Result<(Option<String>, Option<String>), crate::errors::Error> {
     let (after_uuid, before_uuid) = match (after, before) {
         (None, None) => (None, None),

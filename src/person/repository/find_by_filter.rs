@@ -3,7 +3,7 @@ use log::{debug, error};
 use uuid::Uuid;
 use surrealdb::{Datastore};
 
-use crate::{relay::Base64Cursor, person::Person, errors::Error};
+use crate::{relay::base_64_cursor::Base64Cursor, person::model::Person, errors::Error};
 
 use super::Repository;
 

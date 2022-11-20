@@ -1,19 +1,13 @@
-use std::collections::BTreeMap;
+pub mod input;
 
 use async_graphql::{
-    connection::PageInfo, ComplexObject, Context, Enum, InputObject, Result, SimpleObject,
+    connection::PageInfo, ComplexObject, Context, Enum, Result, SimpleObject,
 };
-use log::debug;
 use surrealdb::sql::Value;
 
-use crate::{app::AppStateGlobal, db::add_filter_to_ast, relay::Base64Cursor};
-
-#[derive(InputObject)]
-pub struct InputFilter {
-    pub id: Option<String>,
-    pub name: Option<String>,
-    pub age: Option<i8>,
-}
+use crate::{
+    app::appstate::AppStateGlobal, relay::base_64_cursor::Base64Cursor,
+};
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq)]
 pub enum Order {
@@ -21,11 +15,6 @@ pub enum Order {
     Name,
     Age,
 }
-
-// #[derive(InputObject)]
-// pub struct InputOrder {
-//     pub order: Order,
-// }
 
 #[derive(Debug, SimpleObject)]
 pub struct Person {

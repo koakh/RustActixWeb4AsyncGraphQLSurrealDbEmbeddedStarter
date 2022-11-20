@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use surrealdb::sql::{Id, Number, Strand, Thing, Value};
 
-use crate::person::InputFilter as PersonInputFilter;
+use crate::person::model::input::InputFilter as PersonInputFilter;
 
 // TODO: this is related to person, move to person model
 

@@ -8,10 +8,11 @@ use surrealdb::Session;
 use surrealdb::{sql::Value, Datastore};
 // use surrealdb::sql::thing;
 
+use crate::person::model::input::InputFilter;
 use crate::{
-    app::AppStateGlobal,
-    db::add_filter_to_ast,
-    person::{InputFilter, Order as PersonOrder, Person, PersonConnection, PersonEdge},
+    app::appstate::AppStateGlobal,
+    db::util::add_filter_to_ast,
+    person::model::{Order as PersonOrder, Person, PersonConnection, PersonEdge},
 };
 // use crate::db::add_filter_to_ast;
 //use crate::person::{InputFilter, Order as PersonOrder, Person, PersonConnection, PersonEdge};

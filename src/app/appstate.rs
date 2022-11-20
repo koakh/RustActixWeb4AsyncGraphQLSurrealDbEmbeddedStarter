@@ -2,7 +2,7 @@ use serde::Serialize;
 use std::{cell::Cell, sync::{Mutex, Arc}};
 use surrealdb::{Datastore, Session};
 
-use crate::person;
+use crate::person::service::Service as PersonService;
 
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -19,5 +19,5 @@ pub struct AppStateGlobal {
     // surrealdb
     pub datastore: Arc<Datastore>,
     pub session: Arc<Session>,
-    pub person_service: Arc<person::Service>,
+    pub person_service: Arc<PersonService>,
 }

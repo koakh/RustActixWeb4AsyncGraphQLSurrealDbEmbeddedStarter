@@ -1,7 +1,6 @@
-mod app;
+pub mod app;
 
-pub use app::{Error::*};
-use crate::relay;
+use crate::relay::base_64_cursor::Base64CursorError;
 
 use thiserror::Error;
 
@@ -23,8 +22,8 @@ pub enum Error {
     AlreadyExists(String),
 }
 
-impl std::convert::From<relay::Base64CursorError> for Error {
-  fn from(err: relay::Base64CursorError) -> Self {
+impl std::convert::From<Base64CursorError> for Error {
+  fn from(err: Base64CursorError) -> Self {
       Error::InvalidArgument(err.to_string())
   }
 }

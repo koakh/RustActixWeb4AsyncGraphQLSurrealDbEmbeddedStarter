@@ -1,3 +1,1 @@
-mod appstate;
-
-pub use appstate::{AppState, AppStateGlobal};
+pub mod appstate;

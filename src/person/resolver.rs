@@ -1,6 +1,7 @@
-use std::sync::Arc;
-
-use crate::{person::{PersonConnection, PersonEdge, Service}, app::AppStateGlobal};
+use crate::{
+    app::appstate::AppStateGlobal,
+    person::model::{PersonConnection, PersonEdge},
+};
 use async_graphql::{Context, FieldResult, Object};
 
 #[derive(Default)]
@@ -16,6 +17,7 @@ impl PersonQuery {
         last: Option<i32>,
         before: Option<String>,
     ) -> FieldResult<PersonConnection> {
+        // get AppStateGlobal
         let AppStateGlobal {
             datastore: _,
             session: _,
@@ -23,7 +25,7 @@ impl PersonQuery {
             person_service,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
-        // TODO: this fails
+        // TODO: this fails?
         // let person_service = ctx.data::<Arc<Service>>()?;
 
         let person_edges = person_service

@@ -1,28 +1,31 @@
 use actix_cors::Cors;
-use actix_web::{get, middleware::Logger, route, web, web::Data, App, HttpServer, Responder};
+use actix_web::{get, middleware::Logger, route, web, App, HttpServer, Responder};
 use actix_web_lab::respond::Html;
 use async_graphql::{
     http::{playground_source, GraphQLPlaygroundConfig},
-    EmptyMutation, EmptySubscription, Schema, MergedObject,
+    EmptyMutation, EmptySubscription, Schema,
 };
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
 use std::{
-    cell::Cell,
-    sync::atomic::{AtomicUsize, Ordering},
-    sync::{Mutex, Arc},
+    sync::atomic::AtomicUsize,
+    sync::{Arc, Mutex},
 };
 use surrealdb::{Datastore, Session};
 
 mod app;
 mod db;
 mod errors;
-mod relay;
-mod star_wars;
 mod person;
+mod relay;
 mod schema;
+mod star_wars;
 
-use crate::{app::{AppState, AppStateGlobal}, schema::{AppSchema, Query}};
-use crate::star_wars::{StarWarsQuery, StarWars};
+use crate::person::service::Service as PersonService;
+use crate::star_wars::StarWars;
+use crate::{
+    app::appstate::AppStateGlobal,
+    schema::{AppSchema, Query},
+};
 
 static SERVER_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
@@ -53,7 +56,7 @@ async fn main() -> std::io::Result<()> {
 
     let db = Arc::new(Datastore::new("tikv://127.0.0.1:2379").await.unwrap());
     let ss = Arc::new(Session::for_kv().with_ns("test").with_db("test"));
-    let person_service = Arc::new(person::Service::new(Arc::clone(&db), Arc::clone(&ss)));
+    let person_service = Arc::new(PersonService::new(Arc::clone(&db), Arc::clone(&ss)));
 
     let data = AppStateGlobal {
         counter: Mutex::new(0),

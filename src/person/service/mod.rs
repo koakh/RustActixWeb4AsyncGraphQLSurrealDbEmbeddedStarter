@@ -6,7 +6,7 @@ pub use find_persons::*;
 
 use surrealdb::{Datastore, Session};
 
-use super::Repository;
+use super::repository::Repository;
 
 pub struct Service {
     repo: Repository,

@@ -1,10 +1,10 @@
 use async_graphql::{connection::PageInfo, Error};
 
-use crate::person::PersonEdge;
+use crate::person::model::PersonEdge;
 
 use super::Service;
 use crate::{
-    relay::{convert_params, validate_params},
+    relay::validation::{convert_params, validate_params},
 };
 
 impl Service {
