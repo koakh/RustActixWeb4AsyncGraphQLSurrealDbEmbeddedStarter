@@ -73,13 +73,13 @@ LOG_LEVEL=debug
 #       - 8000:8000
 
 # with tikv: cd ~/.tiup && ./start.sh
-# ./surreal start --log ${LOG_LEVEL} --user root --pass root tikv://127.0.0.1:2379
+./surreal start --log ${LOG_LEVEL} --user root --pass root tikv://127.0.0.1:2379
 
 # inmemory
 # ./surreal start --log ${LOG_LEVEL} --user root --pass root
 
 # rocksDb
-./surreal start --log ${LOG_LEVEL} --user root --pass root file:mydb
+# ./surreal start --log ${LOG_LEVEL} --user root --pass root file:mydb
 ```
 
 ```shell
@@ -420,7 +420,7 @@ if let Some(f) = filter {
 by the way you can use `surrealdb::sql::thing("table:id")` instead of manually constructing `Value::Thing`
 (example: `vars.insert("id".into(), thing(&format!("person:"{v}"))?.into()` to create a `String` of `person:` and the contents of v, then get a reference to it to implicitly cast the String into &str, and then pass it to `thing()`, handle the `Result` and then cast the value with `.into())`
 
-## Relay Pagination 
+## Relay Pagination
 
 - https://relay.dev/graphql/connections.htm
 
@@ -428,7 +428,7 @@ by the way you can use `surrealdb::sql::thing("table:id")` instead of manually c
 
 - https://github.com/async-graphql/async-graphql/issues/974#issuecomment-1192284485
 
-simply awesome async_graphql project
+simply awesome async_graphql axum project, a great resource to work with relay pagination
 
 - https://github.com/azzamsa/tin
  

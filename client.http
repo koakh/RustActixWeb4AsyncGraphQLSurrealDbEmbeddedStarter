@@ -80,6 +80,7 @@ query persons($filter: InputFilter, $order: Order) {
       node{
         id
         name
+        age
       }
     }
   }
@@ -87,25 +88,44 @@ query persons($filter: InputFilter, $order: Order) {
 
 {
   "filter": {
-  //  "id": "person:tobie"
+    // ids don't use table: prefis
+    // "id": "tobie"
+    // "id": "y1vy98ukx9bp535uu7sz"
+    // "name": "Koakh"
+    "age": 50
   },
   "order": "ID"
 }
 
-### SignUpMutation
-
-// @name SignUpMutation
+### queryPersonsNew
+// @name queryPersonsNew
 
 POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
 X-REQUEST-TYPE: {{requestType}}
 // Authorization: Bearer {{authToken}}
 
-mutation SignUpMutation($signUpEmail: String!, $signUpPassword: String!) {
-  signUp(email: $signUpEmail, password: $signUpPassword)
+query personsNew() {
+  personsNew(
+    first: 1
+    # TODO: invalid cursor, may be on decode
+    # after: "1"
+  ) {
+    pageInfo{
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    edges{
+      node{
+        id
+        name
+        age
+      }
+    }
+  }
 }
 
 {
-  "signUpEmail": "moke@example.com",
-  "signUpPassword": "Aa#12345"
 }

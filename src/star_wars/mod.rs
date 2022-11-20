@@ -6,9 +6,9 @@ use slab::Slab;
 
 mod model;
 
-pub use self::model::QueryRoot;
+pub use self::model::StarWarsQuery;
 
-pub type StarWarsSchema = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
+// pub type StarWarsSchema = Schema<StarWarsQuery, EmptyMutation, EmptySubscription>;
 
 pub struct StarWarsChar {
     id: &'static str,

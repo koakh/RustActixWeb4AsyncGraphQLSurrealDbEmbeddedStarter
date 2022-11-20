@@ -8,8 +8,13 @@ use surrealdb::Session;
 use surrealdb::{sql::Value, Datastore};
 // use surrealdb::sql::thing;
 
-use crate::app::AppStateGlobal;
-use crate::db::{add_filter_to_ast, InputFilter, Order as PersonOrder, Person, PersonConnection, PersonEdge};
+use crate::{
+    app::AppStateGlobal,
+    db::add_filter_to_ast,
+    person::{InputFilter, Order as PersonOrder, Person, PersonConnection, PersonEdge},
+};
+// use crate::db::add_filter_to_ast;
+//use crate::person::{InputFilter, Order as PersonOrder, Person, PersonConnection, PersonEdge};
 
 use super::StarWars;
 
@@ -94,10 +99,11 @@ impl Droid {
     }
 }
 
-pub struct QueryRoot;
+#[derive(Default)]
+pub struct StarWarsQuery;
 
 #[Object]
-impl QueryRoot {
+impl StarWarsQuery {
     async fn hero(
         &self,
         ctx: &Context<'_>,
@@ -189,6 +195,7 @@ impl QueryRoot {
             datastore: db,
             session: ses,
             counter: _,
+            person_service: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
         // prepare query
@@ -238,12 +245,13 @@ impl QueryRoot {
         // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
     ) -> FieldResult<PersonConnection> {
         // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
-        
+
         // destruct AppStateGlobal
         let AppStateGlobal {
             datastore: db,
             session: ses,
             counter: _,
+            person_service: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
         // query_persons(after, before, first, last, db, ses, filter)

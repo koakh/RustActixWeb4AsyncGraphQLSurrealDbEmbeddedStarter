@@ -125,6 +125,7 @@ impl PersonConnection {
             datastore: db,
             session: ses,
             counter: _,
+            person_service: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
         // TODO: add to notes destructure Self
@@ -249,6 +250,7 @@ impl PersonConnection {
             datastore: db,
             session: ses,
             counter: _,
+            person_service: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
         Ok(100)

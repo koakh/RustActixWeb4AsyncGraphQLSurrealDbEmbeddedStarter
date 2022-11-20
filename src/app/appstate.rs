@@ -2,6 +2,8 @@ use serde::Serialize;
 use std::{cell::Cell, sync::{Mutex, Arc}};
 use surrealdb::{Datastore, Session};
 
+use crate::person;
+
 #[derive(Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct AppState {
@@ -16,5 +18,6 @@ pub struct AppStateGlobal {
     pub counter: Mutex<i32>,
     // surrealdb
     pub datastore: Arc<Datastore>,
-    pub session: Session,
+    pub session: Arc<Session>,
+    pub person_service: Arc<person::Service>,
 }
