@@ -70,18 +70,19 @@ query persons($filter: InputFilter, $order: Order) {
     filter: $filter,
     order: $order
   ) {
-    pageInfo{
-      hasPreviousPage
-      hasNextPage
-      startCursor
-      endCursor
-    }
+    totalCount
     edges{
       node{
         id
         name
         age
       }
+    }
+    pageInfo{
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
     }
   }
 }
@@ -111,18 +112,19 @@ query personsNew() {
     # TODO: invalid cursor, may be on decode
     # after: "1"
   ) {
-    pageInfo{
-      hasPreviousPage
-      hasNextPage
-      startCursor
-      endCursor
-    }
+    totalCount
     edges{
       node{
         id
         name
         age
       }
+    }
+    pageInfo{
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
     }
   }
 }

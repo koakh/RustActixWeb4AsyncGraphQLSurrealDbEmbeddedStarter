@@ -1,11 +1,9 @@
-use async_graphql::{connection::PageInfo, Error};
+use async_graphql::connection::PageInfo;
 
-use crate::person::model::PersonEdge;
+use crate::{errors::Error, person::model::PersonEdge};
 
 use super::Service;
-use crate::{
-    relay::validation::{convert_params, validate_params},
-};
+use crate::relay::validation::{convert_params, validate_params};
 
 impl Service {
     pub async fn find_persons(
@@ -16,11 +14,12 @@ impl Service {
         before: Option<String>,
     ) -> Result<Vec<PersonEdge>, Error> {
         validate_params(first, last)?;
-        let (after_uuid, before_uuid) = convert_params(after, before)?;
+        // let (after_uuid, before_uuid) = convert_params(after, before)?;
+        let (after_id, before_id) = convert_params(after, before)?;
 
         let persons = self
             .repo
-            .find_by_filter(&self.db, first, after_uuid, last, before_uuid)
+            .find_by_filter(&self.db, first, after_id, last, before_id)
             .await?;
 
         let person_edges: Vec<PersonEdge> =
