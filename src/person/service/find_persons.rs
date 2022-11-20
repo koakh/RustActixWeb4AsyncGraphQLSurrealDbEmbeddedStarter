@@ -1,6 +1,6 @@
 use async_graphql::{connection::PageInfo, Error};
 
-use crate::db::PersonEdge;
+use crate::person::PersonEdge;
 
 use super::Service;
 use crate::{
@@ -25,6 +25,7 @@ impl Service {
 
         let person_edges: Vec<PersonEdge> =
             persons.into_iter().map(|person| person.into()).collect();
+
         Ok(person_edges)
     }
 
