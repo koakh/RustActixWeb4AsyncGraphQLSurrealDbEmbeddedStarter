@@ -160,9 +160,9 @@ impl PersonConnection {
                 // this will convert String to &str, nice improvement, a lot cleaner
                 match &k[..] {
                     "exact_count" => {
-                      // convert surrealdb value to i64
+                        // convert surrealdb value to i64
                         if let Ok(i) = v.to_string().parse::<i64>() {
-                            return Ok(i)
+                            return Ok(i);
                         }
                     }
                     _ => {}

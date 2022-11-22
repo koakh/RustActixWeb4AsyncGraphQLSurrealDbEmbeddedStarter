@@ -11,12 +11,12 @@ use super::repository::Repository;
 pub struct Service {
     repo: Repository,
     pub db: Arc<Datastore>,
-    pub ss: Arc<Session>,
+    pub ses: Arc<Session>,
 }
 
 impl Service {
-    pub fn new(db: Arc<Datastore>, ss: Arc<Session>) -> Self {
+    pub fn new(db: Arc<Datastore>, ses: Arc<Session>) -> Self {
         let repo = Repository::new();
-        Self { db , ss, repo }
+        Self { db , ses, repo }
     }
 }

@@ -1,5 +1,43 @@
 # RELAY NOTES
 
+## Test Realay with current implementation
+
+```sql
+-- with first
+SELECT name FROM person ORDER BY name ASC LIMIT 4;
+"name": "Andy"
+"name": "Devy"
+"name": "Dian"
+"name": "Funi"
+--with first and after - page 2
+SELECT name FROM person WHERE name > "Funi" ORDER BY name ASC LIMIT 4;
+"name": "Hulk"
+"name": "Jack"
+"name": "Jamie"
+"name": "Jill"
+--with first and after - page 2
+SELECT name FROM person WHERE name > "Jill" ORDER BY name ASC LIMIT 4;
+"name": "Jomo"
+"name": "Joni"
+"name": "Koakh"
+"name": "Pelo"
+--with first and after - page 3
+SELECT name FROM person WHERE name > "Pelo" ORDER BY name ASC LIMIT 4;
+"name": "Pete"
+"name": "Peti"
+"name": "Pini"
+"name": "Tobie"
+
+-- with first
+SELECT count, count > 4 AS greater FROM (SELECT id, count() as count FROM (SELECT id FROM person ORDER BY name ASC LIMIT 4 + 1) GROUP BY ALL);
+--with first and after - page 3
+-- Pelu is the last item that have a next page, ex if we start in pelu we have pelu, pete,peti and pini, and next page was a page of one item with tobie only
+SELECT count, count > 4 AS greater FROM (SELECT id, count() as count FROM (SELECT id FROM person WHERE name > "Pelo" ORDER BY name ASC LIMIT 4 + 1) GROUP BY ALL);
+
+
+SELECT count, count > 4 AS greater FROM (SELECT id, count() as count FROM (SELECT id FROM person WHERE name < "Pini" ORDER BY name DESC LIMIT 4) GROUP BY ALL);
+```
+
 ## With implicit ids
 
 ```sql

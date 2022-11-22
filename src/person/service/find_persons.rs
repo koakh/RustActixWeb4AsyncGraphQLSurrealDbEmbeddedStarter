@@ -19,7 +19,7 @@ impl Service {
 
         let persons = self
             .repo
-            .find_by_filter(&self.db, first, after_id, last, before_id)
+            .find_by_filter(&self.db, &self.ses, first, after_id, last, before_id)
             .await?;
 
         let person_edges: Vec<PersonEdge> =
@@ -41,13 +41,13 @@ impl Service {
         let persons = self
             .repo
             // .find_by_filter(&self.db, first, after_uuid, last, before_uuid)
-            .find_by_filter(&self.db, first, after_id.clone(), last, before_id.clone())
+            .find_by_filter(&self.db, &self.ses, first, after_id.clone(), last, before_id.clone())
             .await?;
 
         let page_info = self
             .repo
             // .find_page_info(&self.db, &persons, first, after_uuid, last, before_uuid)
-            .find_page_info(&self.db, &persons, first, after_id, last, before_id)
+            .find_page_info(&self.db, &self.ses, &persons, first, after_id, last, before_id)
             .await?;
         Ok(page_info)
     }

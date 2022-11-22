@@ -108,9 +108,17 @@ X-REQUEST-TYPE: {{requestType}}
 
 query personsNew() {
   personsNew(
-    first: 1
-    # TODO: invalid cursor, may be on decode
-    # after: "1"
+    first: 4
+    # endCursor, last record, used in subsquent pages
+    # ids
+    # after: "Q3Vyc29yOnBlcnNvbjphcnUwdnBub2k5ZHdua3JvbDlzNw"
+    # after: "Q3Vyc29yOnBlcnNvbjpqcmNuMHV1MHQ1cm9pMG95amRrbA"
+    # after: "Q3Vyc29yOnBlcnNvbjp2YnQ3c2VkczlmYzd2cHRqMWdvYg"
+    # after: "Q3Vyc29yOnBlcnNvbjp2YnQ3c2VkczlmYzd2cHRqMWdvYg"
+    # names
+    # after: "Q3Vyc29yOnBlcnNvbjpGdW5p"
+    after: "Q3Vyc29yOnBlcnNvbjpKaWxs"
+    # after: "Q3Vyc29yOnBlcnNvbjpQZWxv"
   ) {
     totalCount
     edges{
