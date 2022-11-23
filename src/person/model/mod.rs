@@ -128,7 +128,8 @@ impl PersonConnection {
                 self.before.clone(),
             )
             .await?;
-        Ok(page_info.into())
+
+        Ok(page_info)
     }
     // Identifies the total count of items in the connection.
     async fn total_count(&self, ctx: &Context<'_>) -> Result<i64> {
@@ -158,14 +159,11 @@ impl PersonConnection {
             // use into_inter this way we don't need to use the clone() inside loop, like if we use into()
             for (k, v) in object.into_iter() {
                 // this will convert String to &str, nice improvement, a lot cleaner
-                match &k[..] {
-                    "exact_count" => {
-                        // convert surrealdb value to i64
-                        if let Ok(i) = v.to_string().parse::<i64>() {
-                            return Ok(i);
-                        }
+                if let "exact_count" = &k[..] {
+                    // convert surrealdb value to boolean
+                    if let Ok(i) = v.to_string().parse::<i64>() {
+                        return Ok(i);
                     }
-                    _ => {}
                 }
             }
         }

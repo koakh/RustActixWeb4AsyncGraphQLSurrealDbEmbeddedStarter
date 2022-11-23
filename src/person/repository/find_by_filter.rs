@@ -169,7 +169,7 @@ impl Repository {
         //     };
         // };
 
-        if let Some(_) = first {
+        if first.is_some() {
             // execute query
             let res = db.execute(&has_next_query, ses, None, false).await.unwrap();
             // get query execute result
@@ -181,14 +181,11 @@ impl Repository {
                 // use into_inter this way we don't need to use the clone() inside loop, like if we use into()
                 for (k, v) in object.into_iter() {
                     // this will convert String to &str, nice improvement, a lot cleaner
-                    match &k[..] {
-                        "data" => {
-                            // convert surrealdb value to i64
-                            if let Ok(i) = v.to_string().parse::<bool>() {
-                                has_next_page = i;
-                            }
+                    if let "data" = &k[..] {
+                        // convert surrealdb value to boolean
+                        if let Ok(i) = v.to_string().parse::<bool>() {
+                            has_next_page = i;
                         }
-                        _ => {}
                     }
                 }
             };
