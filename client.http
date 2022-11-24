@@ -50,8 +50,8 @@ query person($id: String!) {
 }
 
 {
-  // use thing id without table
-  "id": "tobie"
+  // use thing id without table prefix
+  "id": "xeu53xgganr64dwz7imb"
 }
 
 
@@ -113,12 +113,12 @@ query persons() {
     # ids
     # after: "Q3Vyc29yOnBlcnNvbjphcnUwdnBub2k5ZHdua3JvbDlzNw"
     # after: "Q3Vyc29yOnBlcnNvbjpqcmNuMHV1MHQ1cm9pMG95amRrbA"
-    after: "Q3Vyc29yOnBlcnNvbjp2YnQ3c2VkczlmYzd2cHRqMWdvYg"
     # after: "Q3Vyc29yOnBlcnNvbjp2YnQ3c2VkczlmYzd2cHRqMWdvYg"
-    # names
+    # after: "Q3Vyc29yOnBlcnNvbjp2YnQ3c2VkczlmYzd2cHRqMWdvYg"
+    # names: currently working with names
     # after: "Q3Vyc29yOnBlcnNvbjpGdW5p"
     # after: "Q3Vyc29yOnBlcnNvbjpKaWxs"
-    # after: "Q3Vyc29yOnBlcnNvbjpQZWxv"
+    after: "Q3Vyc29yOnBlcnNvbjpQZWxv"
   ) {
     totalCount
     edges{

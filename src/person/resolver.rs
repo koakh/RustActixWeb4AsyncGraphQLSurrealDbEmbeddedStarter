@@ -1,8 +1,8 @@
 use crate::{
     app::appstate::AppStateGlobal,
-    person::model::{PersonConnection, PersonEdge},
+    person::model::{Person, PersonConnection, PersonEdge},
 };
-use async_graphql::{Context, FieldResult, Object};
+use async_graphql::{Context, Error, FieldResult, Object};
 
 #[derive(Default)]
 pub struct PersonQuery;
@@ -18,15 +18,13 @@ impl PersonQuery {
         before: Option<String>,
     ) -> FieldResult<PersonConnection> {
         // get AppStateGlobal
-        let AppStateGlobal {
-            datastore: _,
-            session: _,
-            counter: _,
-            person_service,
-        } = &ctx.data_unchecked::<AppStateGlobal>();
-
-        // TODO: this fails?
-        // let person_service = ctx.data::<Arc<Service>>()?;
+        // let AppStateGlobal {
+        //     datastore: _,
+        //     session: _,
+        //     counter: _,
+        //     person_service,
+        // } = &ctx.data_unchecked::<AppStateGlobal>();
+        let person_service = &ctx.data_unchecked::<AppStateGlobal>().person_service;
 
         let person_edges = person_service
             .find_persons(first, after.clone(), last, before.clone())
@@ -49,16 +47,15 @@ impl PersonQuery {
         Ok(person_connection)
     }
 
-    // TODO:
-    // pub async fn person(&self, ctx: &Context<'_>, id: Uuid) -> FieldResult<model::Person> {
-    //     let server_ctx = ctx.data::<Arc<ServerContext>>()?;
+    pub async fn person(&self, ctx: &Context<'_>, id: String) -> FieldResult<Person> {
+        let person_service = &ctx.data_unchecked::<AppStateGlobal>().person_service;
 
-    //     let result = server_ctx.person_service.find_person(id).await;
-    //     match result {
-    //         Ok(res) => Ok(res.into()),
-    //         Err(err) => Err(Error::new(err.to_string())),
-    //     }
-    // }
+        let result = person_service.find_person(id).await;
+        match result {
+            Ok(res) => Ok(res),
+            Err(err) => Err(Error::new(err.to_string())),
+        }
+    }
 }
 
 // TODO:

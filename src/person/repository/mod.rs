@@ -1,6 +1,8 @@
 mod find_by_filter;
+mod find_person_by_id;
 
 pub use find_by_filter::*;
+pub use find_person_by_id::*;
 
 #[derive(Debug, Clone)]
 pub struct Repository {}

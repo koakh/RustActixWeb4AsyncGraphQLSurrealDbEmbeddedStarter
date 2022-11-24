@@ -2,7 +2,10 @@ use std::sync::Arc;
 use surrealdb::{Datastore, Session};
 
 mod find_persons;
+mod find_person;
+
 pub use find_persons::*;
+pub use find_person::*;
 
 use super::repository::Repository;
 

@@ -185,7 +185,7 @@ impl StarWarsQuery {
             .map(|conn| conn.map_node(Droid))
     }
 
-    async fn person(
+    async fn person_old(
         &self,
         ctx: &Context<'_>,
         #[graphql(desc = "id of the person")] id: String,
