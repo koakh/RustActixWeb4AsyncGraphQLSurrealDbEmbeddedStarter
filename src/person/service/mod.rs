@@ -1,10 +1,8 @@
-mod find_persons;
-
 use std::sync::Arc;
-
-pub use find_persons::*;
-
 use surrealdb::{Datastore, Session};
+
+mod find_persons;
+pub use find_persons::*;
 
 use super::repository::Repository;
 
@@ -17,6 +15,6 @@ pub struct Service {
 impl Service {
     pub fn new(db: Arc<Datastore>, ses: Arc<Session>) -> Self {
         let repo = Repository::new();
-        Self { db , ses, repo }
+        Self { db, ses, repo }
     }
 }

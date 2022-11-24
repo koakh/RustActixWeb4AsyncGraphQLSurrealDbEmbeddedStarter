@@ -232,7 +232,7 @@ impl StarWarsQuery {
     }
 
     #[allow(clippy::too_many_arguments)]
-    async fn persons(
+    async fn persons_old(
         &self,
         ctx: &Context<'_>,
         #[graphql(desc = "custom filter")] filter: Option<InputFilter>,

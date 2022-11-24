@@ -285,7 +285,7 @@ $ cargo build --release --locked --target x86_64-unknown-linux-gnu
 
 now gives
 
-```
+```shell
   CMake Warning at cmake/protobuf.cmake:51 (message):
     gRPC_PROTOBUF_PROVIDER is "module" but PROTOBUF_ROOT_DIR is wrong
 ```
@@ -337,11 +337,6 @@ $ sudo apt-get -y install \
 
 - https://doc.rust-lang.org/nightly/alloc/collections/btree_map/struct.BTreeMap.html
 
-
-
-
-
-
 TODO: use parameters and Thing
 https://discordapp.com/channels/902568124350599239/1014970959461105664/1036062437222404167
 
@@ -351,8 +346,6 @@ empty record set
 https://discordapp.com/channels/902568124350599239/1014970959461105664/1036066184518447264
 
 The Response Value is in every case an Value::Array. If you want to select an single record by its id using select $ID or whatever you would get an array which contains just the single record. If the record does not exist the array would be empty. For handling this just do value.into_iter().next()
-
-
 
 TODO: 
 sugestion of code improvement from BLucky
@@ -422,17 +415,17 @@ by the way you can use `surrealdb::sql::thing("table:id")` instead of manually c
 
 ## Relay Pagination
 
-- https://relay.dev/graphql/connections.htm
+- [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)
 
-- https://www.pdftron.com/blog/graphql/implementing-graphql-pagination/
+- [Building Offset-Based and Cursor-Based Pagination in GraphQL](https://www.pdftron.com/blog/graphql/implementing-graphql-pagination/)
 
-- https://github.com/async-graphql/async-graphql/issues/974#issuecomment-1192284485
+- [ async-graphql / async-graphql : Cursor pagination with SQLX](https://github.com/async-graphql/async-graphql/issues/974#issuecomment-1192284485)
 
 simply awesome async_graphql axum project, a great resource to work with relay pagination
+this was the project that serves as a example of how to implement **Cursor-Based Pagination in Graph with sqlx
 
-- https://github.com/azzamsa/tin
- 
-- https://github.com/azzamsa/tin/blob/master/src/user/model/mod.rs
-- https://github.com/azzamsa/tin/blob/master/src/user/resolver.rs
-- https://github.com/azzamsa/tin/blob/master/src/user/entities.rs
-- https://github.com/azzamsa/tin/blob/master/src/user/repository/find_all_users.rs
+- [azzamsa / tin](https://github.com/azzamsa/tin)
+- [azzamsa / tin - model](https://github.com/azzamsa/tin/blob/master/src/user/model/mod.rs)
+- [azzamsa / tin - resolver](https://github.com/azzamsa/tin/blob/master/src/user/resolver.rs)
+- [azzamsa / tin - entities](https://github.com/azzamsa/tin/blob/master/src/user/entities.rs)
+- [azzamsa / tin - find all users](https://github.com/azzamsa/tin/blob/master/src/user/repository/find_all_users.rs)

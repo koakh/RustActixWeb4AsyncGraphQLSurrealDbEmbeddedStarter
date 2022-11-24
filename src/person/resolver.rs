@@ -9,7 +9,7 @@ pub struct PersonQuery;
 
 #[Object]
 impl PersonQuery {
-    pub async fn persons_new(
+    pub async fn persons(
         &self,
         ctx: &Context<'_>,
         first: Option<i32>,
@@ -34,7 +34,7 @@ impl PersonQuery {
 
         let edges: Vec<PersonEdge> = person_edges
             .into_iter()
-            .map(|person| person.into())
+            // .map(|person| person.into())
             .collect();
 
         let person_connection = PersonConnection {

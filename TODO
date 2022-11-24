@@ -2,7 +2,8 @@ Project:
   ☐ pagination
     ☐ use field order, and add order asc and desc
     ☐ use field order to generate startCursor and endCursor based on its value
-      currently using id
-    ☐ finish crud create, update and delete
-    ☐ optimize and create some associates functions, or create a trait to implement crud and pagination on model
-    ☐ clean all code and finish project
+      currently using id / name ?
+    ☐ implement last and before
+  ☐ optimize and create some associates functions, or create a trait to implement crud and pagination on model
+  ☐ finish crud create, update and delete
+  ☐ clean all code and finish project
