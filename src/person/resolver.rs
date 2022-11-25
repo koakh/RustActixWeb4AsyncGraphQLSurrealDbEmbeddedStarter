@@ -4,6 +4,8 @@ use crate::{
 };
 use async_graphql::{Context, Error, FieldResult, Object};
 
+use super::model::input::{CreatePersonInput, UpdatePersonInput};
+
 #[derive(Default)]
 pub struct PersonQuery;
 
@@ -17,7 +19,7 @@ impl PersonQuery {
         last: Option<i32>,
         before: Option<String>,
     ) -> FieldResult<PersonConnection> {
-        // get AppStateGlobal
+        // // TODO: add to rust notes destructure
         // let AppStateGlobal {
         //     datastore: _,
         //     session: _,
@@ -59,53 +61,55 @@ impl PersonQuery {
 }
 
 // TODO:
-// #[derive(Default)]
-// pub struct PersonMutation;
+#[derive(Default)]
+pub struct PersonMutation;
 
-// #[Object]
-// impl PersonMutation {
-//     pub async fn create_person(
-//         &self,
-//         ctx: &Context<'_>,
-//         input: model::input::CreatePersonInput,
-//     ) -> FieldResult<model::Person> {
-//         let server_ctx = ctx.data::<Arc<ServerContext>>()?;
+#[Object]
+impl PersonMutation {
+    pub async fn create_person(
+        &self,
+        ctx: &Context<'_>,
+        input: CreatePersonInput,
+    ) -> FieldResult<Person> {
+        let person_service = &ctx.data_unchecked::<AppStateGlobal>().person_service;
 
-//         let service_input = service::CreatePersonInput {
-//             name: input.name,
-//             full_name: input.full_name,
-//         };
-//         let result = server_ctx.person_service.create_person(service_input).await;
-//         match result {
-//             Ok(res) => Ok(res.into()),
-//             Err(err) => Err(Error::new(err.to_string())),
-//         }
-//     }
-//     pub async fn update_person(
-//         &self,
-//         ctx: &Context<'_>,
-//         input: model::input::UpdatePersonInput,
-//     ) -> FieldResult<model::Person> {
-//         let server_ctx = ctx.data::<Arc<ServerContext>>()?;
+        let service_input = CreatePersonInput {
+            name: input.name,
+            age: input.age,
+        };
+        let result = person_service.create_person(service_input).await;
+        match result {
+            Ok(res) => Ok(res.into()),
+            Err(err) => Err(Error::new(err.to_string())),
+        }
+    }
 
-//         let service_input = service::UpdatePersonInput {
-//             id: input.id,
-//             name: input.name,
-//             full_name: input.full_name,
-//         };
-//         let result = server_ctx.person_service.update_person(service_input).await;
-//         match result {
-//             Ok(res) => Ok(res.into()),
-//             Err(err) => Err(Error::new(err.to_string())),
-//         }
-//     }
-//     pub async fn delete_person(&self, ctx: &Context<'_>, id: Id) -> FieldResult<model::Person> {
-//         let server_ctx = ctx.data::<Arc<ServerContext>>()?;
+    pub async fn update_person(
+        &self,
+        ctx: &Context<'_>,
+        input: UpdatePersonInput,
+    ) -> FieldResult<Person> {
+        let person_service = &ctx.data_unchecked::<AppStateGlobal>().person_service;
 
-//         let result = server_ctx.person_service.delete_person(id).await;
-//         match result {
-//             Ok(res) => Ok(res.into()),
-//             Err(err) => Err(Error::new(err.to_string())),
-//         }
-//     }
-// }
+        let service_input = UpdatePersonInput {
+            id: input.id,
+            name: input.name,
+            age: input.age,
+        };
+        let result = person_service.update_person(service_input).await;
+        match result {
+            Ok(res) => Ok(res.into()),
+            Err(err) => Err(Error::new(err.to_string())),
+        }
+    }
+
+    pub async fn delete_person(&self, ctx: &Context<'_>, id: String) -> FieldResult<Person> {
+        let person_service = &ctx.data_unchecked::<AppStateGlobal>().person_service;
+
+        let result = person_service.delete_person(id).await;
+        match result {
+            Ok(res) => Ok(res.into()),
+            Err(err) => Err(Error::new(err.to_string())),
+        }
+    }
+}

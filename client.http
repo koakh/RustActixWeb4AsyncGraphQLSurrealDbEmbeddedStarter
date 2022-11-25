@@ -55,8 +55,8 @@ query person($id: String!) {
 }
 
 
-### queryPersons
-// @name queryPersons
+### queryPersonsOld
+// @name queryPersonsOld
 
 POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
@@ -98,8 +98,8 @@ query personsOld($filter: InputFilter, $order: Order) {
   "order": "ID"
 }
 
-### queryPersonsNew
-// @name queryPersonsNew
+### queryPersons
+// @name queryPersons
 
 POST {{gqlUri}} HTTP/1.1
 Content-Type: {{contentType}}
