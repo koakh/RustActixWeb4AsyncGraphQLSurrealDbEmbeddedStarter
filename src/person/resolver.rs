@@ -60,7 +60,6 @@ impl PersonQuery {
     }
 }
 
-// TODO:
 #[derive(Default)]
 pub struct PersonMutation;
 
@@ -76,10 +75,11 @@ impl PersonMutation {
         let service_input = CreatePersonInput {
             name: input.name,
             age: input.age,
+            meta_data: input.meta_data,
         };
         let result = person_service.create_person(service_input).await;
         match result {
-            Ok(res) => Ok(res.into()),
+            Ok(res) => Ok(res),
             Err(err) => Err(Error::new(err.to_string())),
         }
     }
@@ -95,10 +95,11 @@ impl PersonMutation {
             id: input.id,
             name: input.name,
             age: input.age,
+            meta_data: input.meta_data,
         };
         let result = person_service.update_person(service_input).await;
         match result {
-            Ok(res) => Ok(res.into()),
+            Ok(res) => Ok(res),
             Err(err) => Err(Error::new(err.to_string())),
         }
     }
@@ -108,7 +109,7 @@ impl PersonMutation {
 
         let result = person_service.delete_person(id).await;
         match result {
-            Ok(res) => Ok(res.into()),
+            Ok(res) => Ok(res),
             Err(err) => Err(Error::new(err.to_string())),
         }
     }

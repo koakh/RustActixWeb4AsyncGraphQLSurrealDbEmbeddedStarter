@@ -1,10 +1,14 @@
 pub mod input;
 
-use async_graphql::{connection::PageInfo, ComplexObject, Context, Enum, Result, SimpleObject};
-use log::debug;
+use actix_web::guard::Method;
+use async_graphql::{
+    connection::PageInfo, ComplexObject, Context, Enum, InputObject, Result, SimpleObject,
+};
 use surrealdb::sql::Value;
 
 use crate::{app::appstate::AppStateGlobal, relay::base_64_cursor::Base64Cursor};
+
+use self::input::MetaDataInput;
 
 #[derive(Enum, Copy, Clone, Eq, PartialEq)]
 pub enum Order {
@@ -70,6 +74,28 @@ impl From<Value> for MetaData {
         model
     }
 }
+
+// impl From<MetaDataInput> for MetaData {
+//     fn from(value: MetaDataInput) -> Self {
+//         Some(MetaData{
+//             field: value.field
+//         })
+//     }
+// }
+
+// https://stackoverflow.com/questions/73200086/how-do-i-implement-fromt-for-optionu-in-rust
+// impl TryFrom<MetaDataInput> for MetaData {
+//     type Error = &'static str;
+
+//     fn try_from(value: MetaDataInput) -> Result<MetaData, Self::Error> {
+//         Ok(MetaData { field: value.field })
+//         // match value.field {
+//         //     Some(v) => Ok(MetaData { field: Some(v) }),
+//         //     None => Ok(MetaData { field: None }),
+//         //     _ => Err("can't convert character to Foo"),
+//         // }
+//     }
+// }
 
 // relay stuff
 

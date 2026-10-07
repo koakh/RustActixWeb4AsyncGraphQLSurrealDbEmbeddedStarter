@@ -1,6 +1,11 @@
 use async_graphql::InputObject;
 
 #[derive(InputObject)]
+pub struct MetaDataInput {
+    pub field: Option<String>,
+}
+
+#[derive(InputObject)]
 pub struct InputFilter {
     /// The ID of the Person
     pub id: Option<String>,
@@ -16,6 +21,8 @@ pub struct CreatePersonInput {
     pub name: String,
     /// The age of the Person
     pub age: Option<i8>,
+    // The metaData field
+    pub meta_data: Option<MetaDataInput>,
 }
 
 #[derive(InputObject)]
@@ -26,6 +33,8 @@ pub struct UpdatePersonInput {
     pub name: String,
     /// The age of the Person
     pub age: Option<i8>,
+    // The metaData field
+    pub meta_data: Option<MetaDataInput>,
 }
 
 #[derive(InputObject)]
