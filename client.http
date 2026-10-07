@@ -20,7 +20,7 @@ query hero($episode: Episode!) {
     name
     friends{
       id
-      name      
+      name
     }
     appearsIn
   }
