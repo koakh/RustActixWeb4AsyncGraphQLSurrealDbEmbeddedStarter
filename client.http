@@ -50,10 +50,53 @@ query person($id: String!) {
 }
 
 {
-  // use thing id without table
-  "id": "tobie"
+  // use thing id without table prefix
+  "id": "xeu53xgganr64dwz7imb"
 }
 
+
+### queryPersonsOld
+// @name queryPersonsOld
+
+POST {{gqlUri}} HTTP/1.1
+Content-Type: {{contentType}}
+X-REQUEST-TYPE: {{requestType}}
+// Authorization: Bearer {{authToken}}
+
+query personsOld($filter: InputFilter, $order: Order) {
+  personsOld(
+    first: 1,
+    after: "1",
+    filter: $filter,
+    order: $order
+  ) {
+    totalCount
+    edges{
+      node{
+        id
+        name
+        age
+      }
+    }
+    pageInfo{
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+  }
+}
+
+{
+  "filter": {
+    // ids don't use table: prefis
+    // "id": "tobie"
+    // "id": "y1vy98ukx9bp535uu7sz"
+    // "name": "Koakh"
+    "age": 50
+  },
+  "order": "ID"
+}
 
 ### queryPersons
 // @name queryPersons
@@ -63,49 +106,36 @@ Content-Type: {{contentType}}
 X-REQUEST-TYPE: {{requestType}}
 // Authorization: Bearer {{authToken}}
 
-query persons($filter: InputFilter, $order: Order) {
+query persons() {
   persons(
-    first: 1,
-    after: "1",
-    filter: $filter,
-    order: $order
+    first: 4
+    # endCursor, last record, used in subsquent pages
+    # ids
+    # after: "Q3Vyc29yOnBlcnNvbjphcnUwdnBub2k5ZHdua3JvbDlzNw"
+    # after: "Q3Vyc29yOnBlcnNvbjpqcmNuMHV1MHQ1cm9pMG95amRrbA"
+    # after: "Q3Vyc29yOnBlcnNvbjp2YnQ3c2VkczlmYzd2cHRqMWdvYg"
+    # after: "Q3Vyc29yOnBlcnNvbjp2YnQ3c2VkczlmYzd2cHRqMWdvYg"
+    # names: currently working with names
+    # after: "Q3Vyc29yOnBlcnNvbjpGdW5p"
+    # after: "Q3Vyc29yOnBlcnNvbjpKaWxs"
+    after: "Q3Vyc29yOnBlcnNvbjpQZWxv"
   ) {
-    pageInfo{
-      hasPreviousPage
-      hasNextPage
-      startCursor
-      endCursor      
-    }
+    totalCount
     edges{
       node{
         id
         name
+        age
       }
+    }
+    pageInfo{
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
     }
   }
 }
 
 {
-  "filter": {
-    "id": "person:tobie"
-  },
-  "order": "ID"
-}
-
-### SignUpMutation
-
-// @name SignUpMutation
-
-POST {{gqlUri}} HTTP/1.1
-Content-Type: {{contentType}}
-X-REQUEST-TYPE: {{requestType}}
-// Authorization: Bearer {{authToken}}
-
-mutation SignUpMutation($signUpEmail: String!, $signUpPassword: String!) {
-  signUp(email: $signUpEmail, password: $signUpPassword)
-}
-
-{
-  "signUpEmail": "moke@example.com",
-  "signUpPassword": "Aa#12345"
 }

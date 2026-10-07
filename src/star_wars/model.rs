@@ -8,8 +8,14 @@ use surrealdb::Session;
 use surrealdb::{sql::Value, Datastore};
 // use surrealdb::sql::thing;
 
-use crate::app::AppStateGlobal;
-use crate::db::{add_filter_to_ast, InputFilter, Order as PersonOrder, Person, PersonConnection, PersonEdge};
+use crate::person::model::input::InputFilter;
+use crate::{
+    app::appstate::AppStateGlobal,
+    db::util::add_filter_to_ast,
+    person::model::{Order as PersonOrder, Person, PersonConnection, PersonEdge},
+};
+// use crate::db::add_filter_to_ast;
+//use crate::person::{InputFilter, Order as PersonOrder, Person, PersonConnection, PersonEdge};
 
 use super::StarWars;
 
@@ -94,10 +100,11 @@ impl Droid {
     }
 }
 
-pub struct QueryRoot;
+#[derive(Default)]
+pub struct StarWarsQuery;
 
 #[Object]
-impl QueryRoot {
+impl StarWarsQuery {
     async fn hero(
         &self,
         ctx: &Context<'_>,
@@ -178,7 +185,7 @@ impl QueryRoot {
             .map(|conn| conn.map_node(Droid))
     }
 
-    async fn person(
+    async fn person_old(
         &self,
         ctx: &Context<'_>,
         #[graphql(desc = "id of the person")] id: String,
@@ -189,6 +196,7 @@ impl QueryRoot {
             datastore: db,
             session: ses,
             counter: _,
+            person_service: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
         // prepare query
@@ -224,24 +232,27 @@ impl QueryRoot {
     }
 
     #[allow(clippy::too_many_arguments)]
-    async fn persons(
+    async fn persons_old(
         &self,
         ctx: &Context<'_>,
         #[graphql(desc = "custom filter")] filter: Option<InputFilter>,
         // TODO: use order
         #[graphql(desc = "custom order")] order: Option<PersonOrder>,
-        after: Option<String>,
-        before: Option<String>,
         first: Option<i32>,
+        after: Option<String>,
         last: Option<i32>,
+        before: Option<String>,
         // ) -> Vec<Person> {
         // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
     ) -> FieldResult<PersonConnection> {
         // ) -> FieldResult<Connection<usize, Person, EmptyFields, EmptyFields>> {
+
+        // destruct AppStateGlobal
         let AppStateGlobal {
             datastore: db,
             session: ses,
             counter: _,
+            person_service: _,
         } = &ctx.data_unchecked::<AppStateGlobal>();
 
         // query_persons(after, before, first, last, db, ses, filter)
@@ -378,7 +389,7 @@ async fn query_persons(
 
     let mut vec: Vec<Person> = Vec::new();
     if let Value::Array(array) = value {
-        // debug!("array: {:?}", array);
+        debug!("array: {:?}", array);
         array.into_iter().for_each(|value| {
             debug!("surreal value {:?}", value);
             let person: Person = value.into();
@@ -386,6 +397,6 @@ async fn query_persons(
         });
         // debug!("surreal vec {:?}", vec);
     }
-    // resturn record vector
+    // return record vector
     vec
 }

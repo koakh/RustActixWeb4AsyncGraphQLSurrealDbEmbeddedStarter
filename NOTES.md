@@ -44,8 +44,12 @@ make build
 ### SurrealDb CLi and Tools
 
 ```shell
+# current verwsion
 $ curl -sSf https://install.surrealdb.com | sh
-$ sudo mv /home/mario/.surrealdb/surreal /usr/local/bin
+# nightly version
+$ curl --proto '=https' --tlsv1.2 -sSf https://install.surrealdb.com | sh -s -- --nightly
+# optional
+# sudo mv /home/mario/.surrealdb/surreal /usr/local/bin
 $ nano ~/.surrealdb/sdbstart.sh 
 ```
 
@@ -69,13 +73,13 @@ LOG_LEVEL=debug
 #       - 8000:8000
 
 # with tikv: cd ~/.tiup && ./start.sh
-# ./surreal start --log ${LOG_LEVEL} --user root --pass root tikv://127.0.0.1:2379
+./surreal start --log ${LOG_LEVEL} --user root --pass root tikv://127.0.0.1:2379
 
 # inmemory
 # ./surreal start --log ${LOG_LEVEL} --user root --pass root
 
 # rocksDb
-./surreal start --log ${LOG_LEVEL} --user root --pass root file:mydb
+# ./surreal start --log ${LOG_LEVEL} --user root --pass root file:mydb
 ```
 
 ```shell
@@ -144,22 +148,39 @@ $ ./sdbsql.sh
 
 # add some seed data
 
-CREATE person:tobie CONTENT { name: 'Tobie', meta_data: { field: 'some joe tobie' } };
-CREATE person:jamie CONTENT { name: 'Jamie', meta_data: { field: 'some joe jamie' } };
-CREATE person:koakh CONTENT { name: 'Koakh', meta_data: { field: 'some joe koakh' } };
-CREATE person:pelu CONTENT { name: 'Pelo', meta_data: { field: 'some joe pelu' } };
-CREATE person:jomo CONTENT { name: 'Jomo', meta_data: { field: 'some joe jomo' } };
-CREATE person:funi CONTENT { name: 'Funi', meta_data: { field: 'some joe funi' } };
-CREATE person:joni CONTENT { name: 'Joni', meta_data: { field: 'some joe joni' } };
-CREATE person:devy CONTENT { name: 'Devy', meta_data: { field: 'some joe devy' } };
-CREATE person:peti CONTENT { name: 'Peti', meta_data: { field: 'some joe peti' } };
-CREATE person:andy CONTENT { name: 'Andy', meta_data: { field: 'some joe andy' } };
-CREATE person:hulk CONTENT { name: 'Hulk', meta_data: { field: 'some joe hulk' } };
-CREATE person:pini CONTENT { name: 'Pini', meta_data: { field: 'some joe pini' } };
-CREATE person:dian CONTENT { name: 'Dian', meta_data: { field: 'some joe dian' } };
-CREATE person:jack CONTENT { name: 'Jack', meta_data: { field: 'some joe jack' } };
-CREATE person:jill CONTENT { name: 'Jill', meta_data: { field: 'some joe jill' } };
-CREATE person:pete CONTENT { name: 'Pete', meta_data: { field: 'some joe pete' } };
+# CREATE person:tobie CONTENT { name: 'Tobie', meta_data: { field: 'some joe tobie' } };
+# CREATE person:jamie CONTENT { name: 'Jamie', meta_data: { field: 'some joe jamie' } };
+# CREATE person:koakh CONTENT { name: 'Koakh', meta_data: { field: 'some joe koakh' } };
+# CREATE person:pelu CONTENT { name: 'Pelo', meta_data: { field: 'some joe pelu' } };
+# CREATE person:jomo CONTENT { name: 'Jomo', meta_data: { field: 'some joe jomo' } };
+# CREATE person:funi CONTENT { name: 'Funi', meta_data: { field: 'some joe funi' } };
+# CREATE person:joni CONTENT { name: 'Joni', meta_data: { field: 'some joe joni' } };
+# CREATE person:devy CONTENT { name: 'Devy', meta_data: { field: 'some joe devy' } };
+# CREATE person:peti CONTENT { name: 'Peti', meta_data: { field: 'some joe peti' } };
+# CREATE person:andy CONTENT { name: 'Andy', meta_data: { field: 'some joe andy' } };
+# CREATE person:hulk CONTENT { name: 'Hulk', meta_data: { field: 'some joe hulk' } };
+# CREATE person:pini CONTENT { name: 'Pini', meta_data: { field: 'some joe pini' } };
+# CREATE person:dian CONTENT { name: 'Dian', meta_data: { field: 'some joe dian' } };
+# CREATE person:jack CONTENT { name: 'Jack', meta_data: { field: 'some joe jack' } };
+# CREATE person:jill CONTENT { name: 'Jill', meta_data: { field: 'some joe jill' } };
+# CREATE person:pete CONTENT { name: 'Pete', meta_data: { field: 'some joe pete' } };
+
+CREATE person CONTENT { name: 'Tobie', age: 30, meta_data: { field: 'some joe tobie' } };
+CREATE person CONTENT { name: 'Jamie', age: 40, meta_data: { field: 'some joe jamie' } };
+CREATE person CONTENT { name: 'Koakh', age: 50, meta_data: { field: 'some joe koakh' } };
+CREATE person CONTENT { name: 'Pelo', age: 50, meta_data: { field: 'some joe pelu' } };
+CREATE person CONTENT { name: 'Jomo', age: 52, meta_data: { field: 'some joe jomo' } };
+CREATE person CONTENT { name: 'Funi', age: 24, meta_data: { field: 'some joe funi' } };
+CREATE person CONTENT { name: 'Joni', age: 56, meta_data: { field: 'some joe joni' } };
+CREATE person CONTENT { name: 'Devy', age: 19, meta_data: { field: 'some joe devy' } };
+CREATE person CONTENT { name: 'Peti', age: 20, meta_data: { field: 'some joe peti' } };
+CREATE person CONTENT { name: 'Andy', age: 20, meta_data: { field: 'some joe andy' } };
+CREATE person CONTENT { name: 'Hulk', age: 29, meta_data: { field: 'some joe hulk' } };
+CREATE person CONTENT { name: 'Pini', age: 84, meta_data: { field: 'some joe pini' } };
+CREATE person CONTENT { name: 'Dian', age: 20, meta_data: { field: 'some joe dian' } };
+CREATE person CONTENT { name: 'Jack', age: 28, meta_data: { field: 'some joe jack' } };
+CREATE person CONTENT { name: 'Jill', age: 14, meta_data: { field: 'some joe jill' } };
+CREATE person CONTENT { name: 'Pete', age: 16, meta_data: { field: 'some joe pete' } };
 
 # project
 $ cd ~/Development/RustActixWeb4AsyncGraphQLSurrealDbEmbeddedStarter/
@@ -264,7 +285,7 @@ $ cargo build --release --locked --target x86_64-unknown-linux-gnu
 
 now gives
 
-```
+```shell
   CMake Warning at cmake/protobuf.cmake:51 (message):
     gRPC_PROTOBUF_PROVIDER is "module" but PROTOBUF_ROOT_DIR is wrong
 ```
@@ -316,11 +337,6 @@ $ sudo apt-get -y install \
 
 - https://doc.rust-lang.org/nightly/alloc/collections/btree_map/struct.BTreeMap.html
 
-
-
-
-
-
 TODO: use parameters and Thing
 https://discordapp.com/channels/902568124350599239/1014970959461105664/1036062437222404167
 
@@ -330,8 +346,6 @@ empty record set
 https://discordapp.com/channels/902568124350599239/1014970959461105664/1036066184518447264
 
 The Response Value is in every case an Value::Array. If you want to select an single record by its id using select $ID or whatever you would get an array which contains just the single record. If the record does not exist the array would be empty. For handling this just do value.into_iter().next()
-
-
 
 TODO: 
 sugestion of code improvement from BLucky
@@ -399,18 +413,19 @@ if let Some(f) = filter {
 by the way you can use `surrealdb::sql::thing("table:id")` instead of manually constructing `Value::Thing`
 (example: `vars.insert("id".into(), thing(&format!("person:"{v}"))?.into()` to create a `String` of `person:` and the contents of v, then get a reference to it to implicitly cast the String into &str, and then pass it to `thing()`, handle the `Result` and then cast the value with `.into())`
 
-## Relay Pagination 
+## Relay Pagination
 
-- https://relay.dev/graphql/connections.htm
+- [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)
 
-- https://www.pdftron.com/blog/graphql/implementing-graphql-pagination/
+- [Building Offset-Based and Cursor-Based Pagination in GraphQL](https://www.pdftron.com/blog/graphql/implementing-graphql-pagination/)
 
-- https://github.com/async-graphql/async-graphql/issues/974#issuecomment-1192284485
+- [ async-graphql / async-graphql : Cursor pagination with SQLX](https://github.com/async-graphql/async-graphql/issues/974#issuecomment-1192284485)
 
-simply awesome async_graphql project
+simply awesome async_graphql axum project, a great resource to work with relay pagination
+this was the project that serves as a example of how to implement **Cursor-Based Pagination in Graph with sqlx
 
-- https://github.com/azzamsa/tin
-- https://github.com/azzamsa/tin/blob/master/src/user/model/mod.rs
-- https://github.com/azzamsa/tin/blob/master/src/user/resolver.rs
-- https://github.com/azzamsa/tin/blob/master/src/user/entities.rs
-- https://github.com/azzamsa/tin/blob/master/src/user/repository/find_all_users.rs
+- [azzamsa / tin](https://github.com/azzamsa/tin)
+- [azzamsa / tin - model](https://github.com/azzamsa/tin/blob/master/src/user/model/mod.rs)
+- [azzamsa / tin - resolver](https://github.com/azzamsa/tin/blob/master/src/user/resolver.rs)
+- [azzamsa / tin - entities](https://github.com/azzamsa/tin/blob/master/src/user/entities.rs)
+- [azzamsa / tin - find all users](https://github.com/azzamsa/tin/blob/master/src/user/repository/find_all_users.rs)
